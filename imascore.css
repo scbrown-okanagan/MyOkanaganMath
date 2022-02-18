@@ -445,6 +445,7 @@ span.hdr1 {
 
 .midwrapper {
 	position: relative;
+	max-width: 970px;
 }
 
 .red {

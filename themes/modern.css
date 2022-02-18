@@ -1,6 +1,6 @@
 /*General settings - fonts, overall page background, etc*/
 body {
-	font-family: "Trebuchet MS", "Arial", "Helvetica", sans-serif;
+	font-family: "Open Sans", "Trebuchet MS", "Arial", "Helvetica", sans-serif;
 	font-size: 90%;
 }
 
@@ -18,7 +18,7 @@ a:hover {
 /*Container for course items*/
 div.item {
 	/*border: 1px solid #000;*/
-	background-color: #fff;
+	/*background-color: #fff;*/
 }
 
 /*Container for editor*/
@@ -159,7 +159,7 @@ span.link {
 /*Containers for instructor leftbar, main content*/
 #leftcontent {
 		background:#eee;
-		/*border:1px solid #000;*/
+		border:1px solid #000;
 		color:#000;
 }
 
