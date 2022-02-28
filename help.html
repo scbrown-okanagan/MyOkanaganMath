@@ -2251,7 +2251,8 @@ The following macros create graphs or tables:
 <li><strong>showarrays(string,array,[string,array]...,[options])</strong>:  Creates a tabular display of the data in the array(s) as column(s), with the strings
     as column headers.  Alternatively you can call this function with arguments
     showarrays(array of column headers, array of data arrays, [options]).  Options can be a string = "c", "r", or "l" to center, left-align, or right align data,
-	  or can be an array with $opts["align"] for alignment, and $opts["caption"] to add a caption to the table.  To align each column differently, provide a
+	  or can be an array with $opts["align"] for alignment, $opts["tablealign"]="center" to center the whole table,
+      and $opts["caption"] to add a caption to the table.  To align each column differently, provide a
 	  a string with a character for each column, like "rcc"</li>
 <li><strong>showdataarray(array,[columns])</strong>:  Creates a tabular display of the data in the array with no headers.  Data is presented
     in one column unless second argument is provided, in which case the data will be distributed over the specified number of columns.</li>
@@ -3447,9 +3448,10 @@ None - the essay type is not computer graded.
 	<dd>Determines size of space provided for entry of an answer.  Defaults to 5 rows, 50 columns.</dd>
 <dt>$displayformat = "editor" </dt>
 	<dd>Use the rich text editor for the essay answer box.</dd>
-<dt>$scoremethod = "takeanything" or "takeanythingorblank"</dt>
-	<dd>Sets the problem to give full credit for any answer.  The latter also counts
-	blank answers as correct.</dd>
+<dt>$scoremethod = "takeanything" or "takeanythingorblank" or "nomanual"</dt>
+	<dd>The first two sets the problem to give full credit for any answer.  The second also counts
+	blank answers as correct.  The "nomanual" option will give no credit for any answer, but doesn't 
+    mark the question as needing manual grading.</dd>
 <dt>$readerlabel = string</dt>
     <dd>A string that will be used as a visually hidden label on the input box for screenreaders.</dd>
 <dt>$answerbox (In Question Text)</dt>
