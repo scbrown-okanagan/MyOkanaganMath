@@ -17,7 +17,7 @@ array_push($GLOBALS['allowedmacros'],"exp","sec","csc","cot","sech","csch","coth
  "polymakeprettydisp","makexpretty","makexprettydisp","calconarrayif","in_array",
  "prettyint","prettyreal","prettysigfig","roundsigfig","arraystodots","subarray",
  "showdataarray","arraystodoteqns","array_flip","arrayfindindex","fillarray",
- "array_reverse","root","getsnapwidthheight","is_numeric","sign","sgn","prettynegs",
+ "array_reverse","root","getsnapwidthheight","is_numeric","is_nan","sign","sgn","prettynegs",
  "dechex","hexdec","print_r","replacealttext","randpythag","changeimagesize","mod",
  "numtowords","randname","randnamewpronouns","randmalename","randfemalename",
  "randnames","randmalenames","randfemalenames","randcity","randcities","prettytime",
@@ -37,7 +37,7 @@ array_push($GLOBALS['allowedmacros'],"exp","sec","csc","cot","sech","csch","coth
  "randstates","prettysmallnumber","makeprettynegative","rawurlencode","fractowords",
  "randcountry","randcountries","sorttwopointdata","addimageborder","formatcomplex",
  "array_values","comparelogic","stuansready","comparentuples","comparenumberswithunits",
- "isset","atan2","keepif","checkanswerformat","preg_match");
+ "isset","atan2","keepif","checkanswerformat","preg_match","intval");
 
 function mergearrays() {
 	$args = func_get_args();
