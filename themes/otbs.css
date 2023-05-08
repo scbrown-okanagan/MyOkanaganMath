@@ -3,8 +3,8 @@ body {
 	background-color:#FFFFFF;
 	/*font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;*/
 	/*font-family:"Minion Pro","Times New Roman",Times,serif;*/
-	/*font-family:normal Helvetica,Arial,sans-serif;*/
-	font-family: "Trebuchet MS", "Arial", "Helvetica", sans-serif;
+	font-family:normal Helvetica,Arial,sans-serif;
+	/*font-family: "Trebuchet MS", "Arial", "Helvetica", sans-serif;*/
 	font-size: 90%;
 	margin:0;
 	padding:0;
@@ -254,13 +254,13 @@ span.padright {
 	padding-right: 40px;
 }
 .headerwrapper {
-	background:#FFF;
+	/*background:#FFF;*/
 	border: 0px;	
 	margin: 0;
 	margin: 0px;
 	margin-bottom: 0px;
 	/*height: 94px;*/
-	border-bottom: 2px solid #e1134f;
+/*	border-bottom: 2px solid #e1134f; */
 }
 .headerwrapper h1 {
 	margin: 0;
@@ -283,12 +283,17 @@ div#navlistcont {
 }
 div#headerbarlogo {
 	/*background: transparent url(../img/otbslogo.gif) no-repeat scroll left bottom;*/
-	padding-top: 10px;
-	height: 50px;
-	overflow: hidden;
+	font-size: min(50px,5cqw);
+	height: min(75px,6cqw);
+	vertical-align: middle;
+	max-width: 1000px;
+	margin: auto;
+	padding-left: 25px;
+	/*overflow: hidden;*/
 }
 div#headerbarlogo img {
-	vertical-align: -60%;
+	vertical-align: middle;
+	height: min(75px,6cqw)
 }
 div#headerrightlinks {
 	text-align: right;
@@ -429,16 +434,16 @@ span.done {
 }
 
 ul#navlist {
-	background-color: #e1134f;
+	background-color: #dd662ccc;
 	
 }
 ul#navlist li a {
 	padding: 2px 8px;
 	line-height: 20px;
-	background-color: #e1134f;
+	background-color: #0000;
 }
 ul#navlist li a:hover {
-	background-color: #e1134f;
+	background-color: #dd662ccc;
 }
 div#navlistwrapper {
 	margin:auto;
@@ -487,6 +492,7 @@ a.newnote, a.newnote:link, a.newnote:visited {
 	div#headerbarlogo { 
 		padding-top:5px;
 		height:35px;
+    	font-size: 20px;
 	}
 	div#headercontent {
 		height: 45px;

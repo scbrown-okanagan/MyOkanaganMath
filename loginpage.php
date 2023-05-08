@@ -21,7 +21,7 @@ if (!isset($imasroot)) { //don't allow direct access to loginpage.php
 		 $challenge = base64_encode(microtime() . rand(0,9999));
 		 $_SESSION['challenge'] = $challenge;
 	 }
-	 $pagetitle = "About Us";
+	 $pagetitle = "Welcome";
 	 include("infoheader.php");
 	 
 ?>
@@ -75,26 +75,31 @@ $(function() {
 </form>
 </div>
 <div class="text">
-<p><?php echo $installname; ?> is a web based mathematics assessment and course management platform.  </p>
- <img style="float: left; margin-right: 20px; width: 200px" src="https://www.okanagan.bc.ca/sites/default/files/styles/desktop_landscape/public/2020-01/Math%20department.JPG?h=cec8e769&itok=bC-KRp8z" alt="Mathematics student calculates a problem on a whiteboard"/>
 
-<p>This system is designed for mathematics, providing delivery of homework, quizzes, tests, practice tests,
-and diagnostics with rich mathematical content.  Students can receive immediate feedback on algorithmically generated questions with
-numerical or algebraic expression answers.
+<h1>Instructors</h1>
+
+<p><?php echo $installname; ?> is a web based assessment platform that provides delivery of homework, quizzes, tests, practice tests,
+and diagnostics with rich mathematical content. Students can receive immediate feedback on algorithmically generated questions with a 
+variety of different answer types, including numerical, algebraic, logical, and even chemical.
 </p>
 
-<p>If you already have an account, you can log on using the box to the right.</p>
-<p>If you are a new student to the system, <a href="<?php echo $imasroot; ?>/forms.php?action=newuser">Register as a new student</a></p>
-<p>If you are an instructor, you can <a href="<?php echo $imasroot;?>/newinstructor.php">request an account</a></p>
+<p><?php echo $installname; ?> works best when connected to your institution's learning management system through LTI, but can also be
+used as a standalone LMS.</p>
 
-<p>Also available:
-<ul>
-<li><a href="<?php echo $imasroot;?>/info/enteringanswers.php">Help for student with entering answers</a></li>
-<li><a href="<?php echo $imasroot;?>/docs/docs.php">Instructor Documentation</a></li>
-</ul>
+<p>If you are a instructor wishing to use <?php echo $installname; ?> for the first time, you can 
+<a href="<?php echo $imasroot;?>/newinstructor.php">request an instructor account</a>.</p>
+
+<h1>Students</h1>
+
+<p>In most cases, your assignments will be accessed through your institution's Learning Management System (Canvas, Moodle, Blackboard, 
+D2L Brightspace, etc.) and you will not be given a direct login to this page.</p>
+
+<p>If you you were given a course ID and enrollment key, and need to set up a new account then you may 
+<a href="<?php echo $imasroot; ?>/forms.php?action=newuser">register as a new student</a>.</p>
 
 <br class=clear>
-<p class="textright"><?php echo $installname;?> is powered by <a href="http://www.imathas.com">IMathAS</a> &copy; 2006-2013 David Lippman</p>
+<p class="textright"><?php echo $installname;?> is powered by <a href="http://www.imathas.com">IMathAS</a> &copy; 2006-2023 David Lippman<br />
+and hosted in Kelowna, BC, Canada by <a href="https://www.canhost.ca/">CanHost</a></p>
 </div>
 <?php 
 	require("footer.php");

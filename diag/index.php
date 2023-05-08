@@ -16,12 +16,13 @@
 	}
 
 	if (!isset($_GET['id'])) {
-		//echo "<html><body><h1>Diagnostics</h1><ul>";
+		echo "<html><body class=\"fw1000\">";
 		$nologo = true;
-        $loadinginfoheader = true;;
+        $loadinginfoheader = true;
 		$infopath = isset($CFG['GEN']['directaccessincludepath'])?$CFG['GEN']['directaccessincludepath']:'';
-		$placeinhead = "<link rel=\"stylesheet\" href=\"$staticroot/{$infopath}infopages.css\" type=\"text/css\">\n";
+		$placeinhead = "<link rel=\"stylesheet\" href=\"$staticroot/infopages.css\" type=\"text/css\">\n";
 		$placeinhead .= "<script type=\"text/javascript\" src=\"$staticroot/javascript/jstz_min.js\" ></script>";
+		$placeinhead .= "<link rel=\"stylesheet\" href=\"$staticroot/themes/otbs.css\" type=\"text/css\">\n";
 		require("../header.php");
 		$pagetitle = "Diagnostics";
 		require((isset($CFG['GEN']['diagincludepath'])?$CFG['GEN']['diagincludepath']:'../')."infoheader.php");

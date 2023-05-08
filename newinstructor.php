@@ -2,8 +2,13 @@
 
 	require("init_without_validate.php");
 	require_once(__DIR__.'/includes/newusercommon.php');
+
+	//This is stuff I added to get otbs.css loaded up
+	$coursetheme = $CFG['CPS']['theme'][0];
+
 	$pagetitle = "New instructor account request";
 	$placeinhead = "<link rel=\"stylesheet\" href=\"$imasroot/infopages.css\" type=\"text/css\">\n";
+	$placeinhead .= "<link rel=\"stylesheet\" href=\"$staticroot/themes/otbs.css\" type=\"text/css\">\n";
 	$placeinhead .= '<script type="text/javascript" src="'.$imasroot.'/javascript/jquery.validate.min.js"></script>';
 	if (isset($CFG['locale'])) {
 	  $placeinhead .= '<script type="text/javascript" src="'.$imasroot.'/javascript/jqvalidatei18n/messages_'.substr($CFG['locale'],0,2).'.min.js"></script>';

@@ -15,14 +15,15 @@ $installname = 'MyOkanaganMath';
 
 //login prompts
 $loginprompt = "Username";
-$longloginprompt = "Enter a username.  Use only numbers, letters, or the _ character.";
-$loginformat = '/^[\w+\-]+$/';
+$longloginprompt = "Enter a username.  Use only numbers, letters, dashes, underscores, or @.";
+//$loginformat = '/^[\w+\-]+$/';
+$loginformat = '/^[\w-_.@]+$/';
 
 //require email confirmation of new users?
 $emailconfirmation = false;
 
 //email to send notices from
-$sendfrom = "no-reply@mom.okanagan.bc.ca";
+$sendfrom = "no-reply@imathas.okanagan.bc.ca";
 
 //color shift icons as deadline approaches?
 $colorshift = true;
@@ -43,7 +44,7 @@ $mathimgurl = "http://www.imathas.com/cgi-bin/mimetex.cgi";
 //A small logo to display on the upper right of course pages
   //set = '<img src="/path/to/img.gif">' or = 'Some Text'
   //Image should be about 120 x 80px
-//$smallheaderlogo = '<img src="/img/oc-red.gif" width="20" height="20">';
+//$smallheaderlogo = '<img src="favicon.ico" width="50" height="50">';
 
 //enable lti?
 $enablebasiclti = true;
@@ -67,6 +68,8 @@ $CFG['CPS']['themenames'] = "MOM,MOM Fixed,MOM Fixed Wide";
 
 $CFG['GEN']['headerinclude'] = 'myheadercontent.php';
 
+$CFG['GEN']['enrollonnewinstructor'] = array(8);
+
 //session path 
 //$sessionpath = "";
 
@@ -81,8 +84,9 @@ $CFG['GEN']['headerinclude'] = 'myheadercontent.php';
 
 //Uncomment to change the default course theme, also used on the home & admin page:
 //$defaultcoursetheme = "default.css"
-
 //To change loginpage based on domain/url/etc, define $loginpage here
+
+$CFG['GEN']['domainlevel'] = -4;
 
 //no need to change anything from here on
   /* Connecting, selecting database */
