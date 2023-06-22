@@ -75,7 +75,10 @@ if ($myrights<20) {
 	$stm = $DBH->prepare($query);
 	$stm->execute(array(':id'=>$qsetid));
 	$line = $stm->fetch(PDO::FETCH_ASSOC);
-
+    if ($line === false) {
+        echo _('Invalid question ID');
+        exit;
+    }
     $isquestionauthor = ($line['ownerid'] == $userid);
 
   $a2 = new AssessStandalone($DBH);
@@ -98,8 +101,8 @@ if ($myrights<20) {
       'qsid' => array($qn => $qsetid),
       'stuanswers' => array(),
       'stuanswersval' => array(),
-      'scorenonzero' => array(($qn+1) => false),
-      'scoreiscorrect' => array(($qn+1) => false),
+      'scorenonzero' => array(($qn+1) => -1),
+      'scoreiscorrect' => array(($qn+1) => -1),
       'partattemptn' => array($qn => array()),
       'rawscores' => array($qn => array())
     );
@@ -185,11 +188,11 @@ if (!empty($CFG['assess2-use-vue-dev'])) {
   $placeinhead .= '<script src="'.$staticroot.'/mathquill/mqedlayout.js?v=071122" type="text/javascript"></script>';
 } else {
   $placeinhead .= '<script src="'.$staticroot.'/mathquill/mathquill.min.js?v=112822" type="text/javascript"></script>';
-  $placeinhead .= '<script src="'.$staticroot.'/javascript/assess2_min.js?v=111622" type="text/javascript"></script>';
+  $placeinhead .= '<script src="'.$staticroot.'/javascript/assess2_min.js?v=021123" type="text/javascript"></script>';
 }
 
 $placeinhead .= '<script src="'.$staticroot.'/javascript/assess2supp.js?v=041522" type="text/javascript"></script>';
-$placeinhead .= '<link rel="stylesheet" type="text/css" href="'.$staticroot.'/mathquill/mathquill-basic.css?v=71022">
+$placeinhead .= '<link rel="stylesheet" type="text/css" href="'.$staticroot.'/mathquill/mathquill-basic.css?v=021823">
   <link rel="stylesheet" type="text/css" href="'.$staticroot.'/mathquill/mqeditor.css?v=081122">';
 $placeinhead .= '<style>form > hr { border: 0; border-bottom: 1px solid #ddd;}</style>';
 $placeinhead .= '<script>
@@ -364,11 +367,12 @@ if ($overwriteBody==1) {
 
   // DO DISPLAY
   echo '<hr/>';
-
+  $starttime = microtime(true);
   $disp = $a2->displayQuestion($qn, [
     'showans' => true,
     'showallparts' => ($hasSeqParts && !empty($_GET['showallparts']))
   ]);
+  $gentime = microtime(true) - $starttime;
   if (isset($_SESSION['userprefs']['useeqed']) && $_SESSION['userprefs']['useeqed'] == 0) {
       $disp['jsparams']['noMQ'] = true;
   }
@@ -425,11 +429,12 @@ if ($overwriteBody==1) {
 
 	printf("<p>"._("Question ID:")." %s.  ", Sanitize::encodeStringForDisplay($qsetid));
 	echo '<span class="small subdued">'._('Seed:').' '.Sanitize::onlyInt($seed) . '.</span> ';
+    echo '<span class="small subdued">'._('Generated in ').round(1000*$gentime).'ms</span> ';
   if ($line['ownerid'] == $userid) {
     echo '<a href="moddataset.php?cid='. Sanitize::courseId($cid) . '&id=' . Sanitize::onlyInt($qsetid).'" target="_blank">';
     echo _('Edit Question') . '</a>';
   } else {
-	  echo "<a href=\"#\" onclick=\"GB_show('$sendtitle','$imasroot/course/sendmsgmodal.php?sendtype=$sendtype&cid=" . Sanitize::courseId($sendcid) . '&quoteq='.Sanitize::encodeUrlParam("0-{$qsetid}-{$seed}-reperr-{$assessver}"). "',800,'auto')\">$sendtitle</a> "._("to report problems");
+	  echo "<a href=\"#\" onclick=\"GB_show('$sendtitle','$imasroot/course/sendmsgmodal.php?sendtype=$sendtype&cid=" . Sanitize::courseId($sendcid) . '&quoteq='.Sanitize::encodeUrlParam("0-{$qsetid}-{$seed}-reperr-{$assessver}"). "',800,'auto',true,'',null,{label:'"._('Send Message')."',func:'sendmsg'})\">$sendtitle</a> "._("to report problems");
   }
   echo '</p>';
 
@@ -463,8 +468,8 @@ if ($overwriteBody==1) {
 		if ($myrights==100) {
             printf(' (<span class="pii-full-name">%s, %s</span>)',
                 Sanitize::encodeStringForDisplay($row[1]), Sanitize::encodeStringForDisplay($row[2]));
-            echo ' <a class="small" href="#" onclick="dellibitems('.Sanitize::onlyInt($row[3]).',';
-            echo Sanitize::onlyInt($row[4]).',this);return false;">';
+            echo ' <a class="small" href="#" onclick="if(confirm(\'Are you sure?\')){dellibitems('.Sanitize::onlyInt($row[3]).',';
+            echo Sanitize::onlyInt($row[4]).',this);} return false;">';
             echo _('Remove all questions in this library added by this person');
             echo '</a>';
 		}
@@ -473,6 +478,7 @@ if ($overwriteBody==1) {
 	echo '</ul>';
 
 	if ($line['ancestors']!='') {
+        $line['ancestors'] = str_replace(',',', ',$line['ancestors']);
 		echo "<p>"._("Derived from:")." ".Sanitize::encodeStringForDisplay($line['ancestors']);
 		if ($line['ancestorauthors']!='') {
 			echo '<br/>'._('Created by: ').Sanitize::encodeStringForDisplay($line['ancestorauthors']);

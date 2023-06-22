@@ -46,7 +46,7 @@ function matrix($vals,$rows,$cols) {
 //matrixformat(matrix)
 //Formats a matrix item into an ASCIIMath string for display or $answer
 function matrixformat($m, $bracket='[', $asfraction=false) {
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixformat input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixformat input not a valid matrix'; } return '';}
 	if ($bracket == '(') {
 		$rb = ')';
 	} else if ($bracket == '|') {
@@ -81,6 +81,7 @@ function matrixformatfrac($m, $bracket='[') {
     return matrixformat($m, $bracket, true);
 }
 
+/*
 //matrixdisplaytable(matrix, [matrixname, displayASCIIticks, linemode, headernames, tablestyle, rownames, rowheader, caption])
 // Create a string that is a valid HTML table syntax for display.
 //
@@ -95,23 +96,24 @@ function matrixformatfrac($m, $bracket='[') {
 //                    table, either 0 or 1.  Use 0 if you are
 //                    building an answerbox matrix.
 //
-//              def  0 do not use math ticks
-//                   1        use math ticks
+//                    0 do not use math ticks
+//           default  1        use math ticks
 //
 // linemode: Show none, augments, or simplex style
-//      def  0 show no lines
-//           1 show aumented line
+//           0 show no lines
+//   default 1 show aumented line
 //           2 show simplex  lines
 //
 // headernames: list or array of the variables "x1,x2,x3" that are
 //              used for the column titles.
-// default     none
+// default      none
 //
 // tablestyle: for any additional styles for the table that you
 //             may want.  like "color:#40B3DF;"
-//     default none
-// rownames:  list or array of the variables "x1,x2,x3" that are
-//              used for the row titles.
+// default     one
+//
+// rownames:   list or array of the variables "x1,x2,x3" that are
+//             used for the column titles.
 // default     none
 //
 // rowheader:  string that is entered into the row name column in the header row
@@ -120,275 +122,274 @@ function matrixformatfrac($m, $bracket='[') {
 // caption:    string - caption for the table
 // default     none
 //
+ */
 function matrixdisplaytable() {
+    //  arguments list -------------------------------------
+    //  0 = matrix
+    //  1 = matrix name
+    //  2 = display ASCII tick marks (yes/no)
+    //  3 = linemode - no line, aumented, or simplex
+    //  4 = header column names, default is not to show
+    //  5 = CSS tablestyle for the table.
+    //  6 = rownames for the table.
+    //  7 = rowheader for the table.
+    //  8 = caption for the table.
 
-  //  arguments list -------------------------------------
-  //  0 = matrix
-  //  1 = matrix name
-  //  2 = display ASCII tick marks (yes/no)
-  //  3 = linemode - no line, aumented, or simplex
-  //  4 = header column names, default is not to show
-  //  5 = CSS tablestyle for the table.
+    // process arguments ------------------------------------
+    $args = func_get_args();
 
-  // process arguments ------------------------------------
-  $args = func_get_args();
-
-  if (count($args)==0) {
-    if ($GLOBALS['myrights']>10) { echo "Nothing to display - no matrix supplied.<br/>"; }
-    return "";
-  }
-  $m = $args[0];
-	
-  if (!isMatrix($m)) {
-    if ($GLOBALS['myrights']>10) { echo 'error: matrixdisplaytable input not a matrix'; } 
-    return '';
-  }
-	
-  // matrixname
-  if(isset($args[1])) {
-    $matrixname = $args[1];
-  } else {
-    $matrixname = "";
-  }
-
-  //displayASCII
-  if(isset($args[2])) {
-    if($args[2]==0) { $ticks = ""; } else { $ticks = "`";}
-  }
-  else { $ticks = ""; }
-
-  //mode
-  if(isset($args[3])) {
-    $mode = $args[3];
-    if(($mode!=0)&&($mode!=1)&&($mode!=2)) {
-      echo "The supplied mode ($mode) is invalid.  Valid modes are 0,1,2.<br/>";
-      $mode=0;
-    };
-  } else { $mode=0; }
-
-  //headernames
-  if(isset($args[4])) {
-    $headers = $args[4];
-    if (!is_array($headers)) {
-      $headers = explode(',',$headers);
+    if (count($args)==0) {
+        if (!empty($GLOBALS['inQuestionTesting'])) { echo "Nothing to display - no matrix supplied.<br/>"; }
+        return "";
     }
-  } else { $headers = null; }
+    $m = $args[0];
 
-  //tablestyle
-  if(isset($args[5])) {
-    $tablestyle = $args[5];
-  } else {$tablestyle = ""; }
+    // counts
+    $rows = count($m);
+    $cols = count($m[0]);
 
-  //rownames
-  if(isset($args[6])) {
-      $rownames = $args[6];
-      if (!is_array($rownames)) {
-          $rownames = explode(',',$rownames);
-      }
-  } else { $rownames = null; }
+    if (!isMatrix($m)) {
+        if (!empty($GLOBALS['inQuestionTesting'])) { echo 'error: matrixdisplaytable input not a valid matrix'; }
+        return '';
+    }
 
-  // rowheader
-  if(isset($args[7])) {
-      $rowheader = $args[7];
-  }
-  else { $rowheader = ""; }
+    // matrixname
+    if(isset($args[1])) {
+        $matrixname = $args[1];
+    } else {
+        $matrixname = "";
+    }
+
+    //displayASCII
+    if(isset($args[2])) {
+        if($args[2]==0) { $ticks = ""; } else { $ticks = "`";}
+    }
+    else { $ticks = ""; }
+
+    //mode
+    if(isset($args[3])) {
+        $mode = $args[3];
+        if(($mode!=0)&&($mode!=1)&&($mode!=2)) {
+            if (!empty($GLOBALS['inQuestionTesting'])) {
+                echo "The supplied mode ($mode) is invalid.  Valid modes are 0,1,2.<br/>";
+            }
+            $mode=0;
+        };
+    } else { $mode=0; }
+
+    //column headernames
+    if(isset($args[4])) {
+        $headers = $args[4];
+        if (!is_array($headers)) {
+            $headers = explode(',',$headers);
+        }
+    } else {
+        $headers = array();
+        for ($cloop=0;$cloop<$cols; $cloop++) {
+            $headers[$cloop] = "";
+        }
+    }
+    
+    //tablestyle
+    if(isset($args[5])) {
+        $tablestyle = $args[5];
+    } else {$tablestyle = ""; }
+
+    //rownames
+    if(isset($args[6])) {
+        $rownames = $args[6];
+        if (!is_array($rownames)) {
+            $rownames = explode(',',$rownames);
+        }
+    } else { 
+        $rownames = array();
+        for ($rloop=0; $rloop<$rows; $rloop++) {
+            $rownames[$rloop] = "";
+        }
+    }
+
+    // rowheader
+    if(isset($args[7])) {
+        $rowheader = $args[7];
+    }
+    else { $rowheader = ""; }
 
     // caption
-  if(isset($args[8])) {
-      $caption = $args[8];
-  }
-  else { $caption = ""; }
+    if(isset($args[8])) {
+        $caption = $args[8];
+    }
+    else { $caption = ""; }
 
-  // Done processing arguments ----------------------------
-  //
-  // style sheets
-  $nopad = 'class="nopad"';
-  $onerowleftborder  = "style='border-top:1px solid black;border-left:1px solid black;border-bottom:1px solid black;'";
-  $topleftborder     = "style='border-top:1px solid black;border-left:1px solid black;'";
-  $leftborder        = "style='border-left:1px solid black;'";
-  $leftborderSimplex = "style='border-left:1px solid black;border-top:1px solid black;'";
-  $bottomleftborder  = "style='border-bottom:1px solid black;border-left:1px solid black;'";
+    // Done processing arguments ----------------------------
+    //
+    // style sheets
+    $nopad = 'class="nopad"';
+    $onerowleftborder  = "style='border-top:1px solid black;border-left:1px solid black;border-bottom:1px solid black;'";
+    $topleftborder     = "style='border-top:1px solid black;border-left:1px solid black;'";
+    $leftborder        = "style='border-left:1px solid black;'";
+    $leftborderSimplex = "style='border-left:1px solid black;border-top:1px solid black;'";
+    $bottomleftborder  = "style='border-bottom:1px solid black;border-left:1px solid black;'";
 
-  $Simplex = "style='border-top:1px solid black;'";
+    $Simplex = "style='border-top:1px solid black;'";
 
-  $onerowrightborder = "style='border-top:1px solid black;border-right:1px solid black;border-bottom:1px solid black;'";
-  $toprightborder    = "style='border-top:1px solid black;border-right:1px solid black;'";
-  $rightborder       = "style='border-right:1px solid black;'";
-  $bottomrightborder = "style='border-bottom:1px solid black;border-right:1px solid black;'";
+    $onerowrightborder = "style='border-top:1px solid black;border-right:1px solid black;border-bottom:1px solid black;'";
+    $toprightborder    = "style='border-top:1px solid black;border-right:1px solid black;'";
+    $rightborder       = "style='border-right:1px solid black;'";
+    $bottomrightborder = "style='border-bottom:1px solid black;border-right:1px solid black;'";
 
-  // counts
-  $rows = count($m);
-  $cols = count($m[0]);
+    $lastrow = $rows-1;
+    $lastcol = $cols-1;
 
-  if($rowheader!="") {
-      // add default blank spaces if the rowheader cell is not blank
-      if($rownames == null) {
-          $rownames = array();
-          for ($rloop=0; $rloop<$rows; $rloop++) {
-              $rownames[$rloop] = "";
-          }
-      }
-      if($headers==null){
-          $headers = array();
-          for ($cloop=0;$cloop<$cols; $cloop++) {
-              $headers[$cloop] = "";
-          }
-      }
-  }
+    $Tableau = "<table cellspacing='0' style='border:none;border-spacing: 0;border-collapse: collapse;text-align:right;border-spacing: 0px 0px;$tablestyle'>\r\n";
 
-  $lastrow = $rows-1;
-  $lastcol = $cols-1;
+    if($caption!="") {
+        $Tableau .= "<caption>$caption</caption>\r\n";
+    }
+    $Tableau .= "<tbody>\r\n";
 
-  $Tableau = "<table cellspacing='0' style='border:none;border-spacing: 0;border-collapse: collapse;text-align:right;border-spacing: 0px 0px;$tablestyle'>\r\n";
-
-  if($caption!="") {
-      $Tableau .= "<caption>$caption</caption>\r\n";
-  }
-$Tableau .= "<tbody>\r\n";
-
-  for ($rloop=0; $rloop<$rows; $rloop++) {
-    $Tableau .= "<tr>\r\n";
-    if($rloop==0) {
-        if($matrixname!="") {
-            if(!empty($headers)) { $matricnamerows = $rows+1; } else { $matricnamerows = $rows; }
-            // Accessible option added
-            $Tableau.= "<td rowspan='$matricnamerows'> $matrixname </td>\r\n";
-        }
-
-        if(!empty($headers))  {
-            if($rowheader!="") {
+    for ($rloop=0; $rloop<$rows; $rloop++) {
+        $Tableau .= "<tr>\r\n";
+        if($rloop==0) {
+            if($matrixname!="") {
+                if(!empty($headers)) { $matricnamerows = $rows+1; } else { $matricnamerows = $rows; }
                 // Accessible option added
-                $Tableau.= "<th scope=\"col\">$rowheader</th>\r\n";
-            } else {
-                if($rownames!=null) {
-                    $Tableau.= "<td>&nbsp;</td>\r\n";
-                }
+                $Tableau.= "<td rowspan='$matricnamerows'> $matrixname </td>\r\n";
             }
 
-            $Tableau.= "<td $nopad>&nbsp;</td>\r\n"; // for the left table border
-            for ($cloop=0;$cloop<$cols; $cloop++)
-            {
-                if  ($cloop==$lastcol) { // R1C(Last)
-                    if($mode>0) { $Tableau.= "<td $nopad>&nbsp;</td><td $nopad>&nbsp;</td>\r\n";} // add augemented column filler
-                }
-                if(($headers[$cloop]!=null)&&($headers[$cloop]!=""))
-                {
+            if(!empty($headers))  {
+                if($rowheader!="") {
                     // Accessible option added
-                    $Tableau.= "<th scope=\"col\">".$headers[$cloop]."</th>\r\n";
+                    $Tableau.= "<th scope=\"col\">$rowheader</th>\r\n";
+                } else {
+                    if($rownames!=null) {
+                        $Tableau.= "<td>&nbsp;</td>\r\n";
+                    }
                 }
-                else
+
+                $Tableau.= "<td $nopad>&nbsp;</td>\r\n"; // for the left table border
+                for ($cloop=0;$cloop<$cols; $cloop++)
                 {
-                    $Tableau.= "<td>&nbsp;</td>\r\n";
-                }
-            }
-            $Tableau.= "<td>&nbsp;</td>\r\n</tr>\r\n<tr>\r\n";  // for the right table border
-        }
-    }
-
-    if(!empty($rownames))  {
-        // Accessible option added
-        if(($rownames[$rloop]!=null)&&($rownames[$rloop]!="")) {
-            $Tableau.= "<th scope=\"row\">".$rownames[$rloop]."</th>\r\n";
-        } else {
-            $Tableau.= "<td>&nbsp;</td>\r\n";
-        }
-    }
-
-    for ($cloop=0;$cloop<$cols; $cloop++) {
-        //$index =$rloop*$ctemp + $cloop;
-
-        //$TableElement = "&nbsp;".$ticks.$m[$rloop][$cloop].$ticks."&nbsp;";
-        $TableElement = $ticks.$m[$rloop][$cloop].$ticks;
-
-        if ($rloop==0) {
-            if($rows==1)  {
-                // only 1 row
-                if ($cloop==0) { // R1C1
-                    $Tableau.= "<td $onerowleftborder>&nbsp;</td>\r\n<td>$TableElement</td>\r\n";
-                    if($cloop==$lastcol) {
-                        $Tableau.= "<td $onerowrightborder>&nbsp;</td>\r\n";
+                    if  ($cloop==$lastcol) { // R1C(Last)
+                        if($mode>0) { $Tableau.= "<td $nopad>&nbsp;</td><td $nopad>&nbsp;</td>\r\n";} // add augemented column filler
+                    }
+                    if(isset($headers[$cloop])&&($headers[$cloop]!=""))
+                    {
+                        // Accessible option added
+                        $Tableau.= "<th scope=\"col\">".$headers[$cloop]."</th>\r\n";
+                    }
+                    else
+                    {
+                        $Tableau.= "<td>&nbsp;</td>\r\n";
                     }
                 }
-                elseif ($cloop==$lastcol) { // R1C(Last)
-                    if($mode>0) { $Tableau.= "<td $nopad>&nbsp;</td><td $leftborder >&nbsp;</td>\r\n";} // add augemented column
-                    $Tableau.= "<td>$TableElement</td><td $onerowrightborder>&nbsp;</td>\r\n";
-                }
-                else {
-                    $Tableau.= "<td>$TableElement</td>\r\n";
-                }
-            }
-            else {
-                // top row
-                if ($cloop==0) { // R1C1
-                    $Tableau.= "<td $topleftborder>&nbsp;</td>\r\n<td>$TableElement</td>\r\n";
-                    if($cloop==$lastcol) {
-                        $Tableau.= "<td $toprightborder>&nbsp;</td>\r\n";
-                    }
-                }
-                elseif  ($cloop==$lastcol) { // R1C(Last)
-                    if($mode>0) { $Tableau.= "<td $nopad>&nbsp;</td><td $leftborder >&nbsp;</td>\r\n";} // add augemented column
-                    $Tableau.= "<td>$TableElement</td>\r\n<td $toprightborder>&nbsp;</td>\r\n";
-                }
-                else {
-                    $Tableau.= "<td>$TableElement</td>\r\n";
-                }
+                $Tableau.= "<td>&nbsp;</td>\r\n</tr>\r\n<tr>\r\n";  // for the right table border
             }
         }
-        elseif ($rloop==$lastrow) { // top row
-            if ($cloop==0) {  // R(last)C1
-                $Tableau.= "<td $bottomleftborder>&nbsp;</td>\r\n";
-                if($mode==2){
-                    $Tableau.= "<td $Simplex>$TableElement</td>\r\n";
+
+        if(!empty($rownames))  {
+            // Accessible option added
+            if(($rownames[$rloop]!=null)&&($rownames[$rloop]!="")) {
+                $Tableau.= "<th scope=\"row\">".$rownames[$rloop]."</th>\r\n";
+            } else {
+                $Tableau.= "<td>&nbsp;</td>\r\n";
+            }
+        }
+
+        for ($cloop=0;$cloop<$cols; $cloop++) {
+            //$index =$rloop*$ctemp + $cloop;
+
+            //$TableElement = "&nbsp;".$ticks.$m[$rloop][$cloop].$ticks."&nbsp;";
+            $TableElement = $ticks.$m[$rloop][$cloop].$ticks;
+
+            if ($rloop==0) {
+                if($rows==1)  {
+                    // only 1 row
+                    if ($cloop==0) { // R1C1
+                        $Tableau.= "<td $onerowleftborder>&nbsp;</td>\r\n<td>$TableElement</td>\r\n";
+                        if($cloop==$lastcol) {
+                            $Tableau.= "<td $onerowrightborder>&nbsp;</td>\r\n";
+                        }
+                    }
+                    elseif ($cloop==$lastcol) { // R1C(Last)
+                        if($mode>0) { $Tableau.= "<td $nopad>&nbsp;</td><td $leftborder >&nbsp;</td>\r\n";} // add augemented column
+                        $Tableau.= "<td>$TableElement</td><td $onerowrightborder>&nbsp;</td>\r\n";
+                    }
+                    else {
+                        $Tableau.= "<td>$TableElement</td>\r\n";
+                    }
                 }
                 else {
-                    $Tableau.= "<td>$TableElement</td>\r\n";
+                    // top row
+                    if ($cloop==0) { // R1C1
+                        $Tableau.= "<td $topleftborder>&nbsp;</td>\r\n<td>$TableElement</td>\r\n";
+                        if($cloop==$lastcol) {
+                            $Tableau.= "<td $toprightborder>&nbsp;</td>\r\n";
+                        }
+                    }
+                    elseif  ($cloop==$lastcol) { // R1C(Last)
+                        if($mode>0) { $Tableau.= "<td $nopad>&nbsp;</td><td $leftborder >&nbsp;</td>\r\n";} // add augemented column
+                        $Tableau.= "<td>$TableElement</td>\r\n<td $toprightborder>&nbsp;</td>\r\n";
+                    }
+                    else {
+                        $Tableau.= "<td>$TableElement</td>\r\n";
+                    }
                 }
-                if  ($cloop==$lastcol){  // R(last)C(Last)
+            }
+            elseif ($rloop==$lastrow) { // top row
+                if ($cloop==0) {  // R(last)C1
+                    $Tableau.= "<td $bottomleftborder>&nbsp;</td>\r\n";
+                    if($mode==2){
+                        $Tableau.= "<td $Simplex>$TableElement</td>\r\n";
+                    }
+                    else {
+                        $Tableau.= "<td>$TableElement</td>\r\n";
+                    }
+                    if  ($cloop==$lastcol){  // R(last)C(Last)
+                        $Tableau.= "<td $bottomrightborder>&nbsp;</td>\r\n";
+                    }
+                }
+                elseif  ($cloop==$lastcol){  // R(last)C(Last)
+                    if($mode==2) { $Tableau.= "<td $Simplex>&nbsp;</td><td $leftborderSimplex >&nbsp;</td>\r\n"; }
+                    if($mode==1) { $Tableau.= "<td $nopad>&nbsp;</td><td $leftborder >&nbsp;</td>\r\n"; }
+                    if($mode==2) {
+                        $Tableau.= "<td $Simplex>$TableElement</td>\r\n";
+                    }
+                    else {
+                        $Tableau.= "<td>$TableElement</td>\r\n";
+                    }
                     $Tableau.= "<td $bottomrightborder>&nbsp;</td>\r\n";
                 }
-            }
-            elseif  ($cloop==$lastcol){  // R(last)C(Last)
-                if($mode==2) { $Tableau.= "<td $Simplex>&nbsp;</td><td $leftborderSimplex >&nbsp;</td>\r\n"; }
-                if($mode==1) { $Tableau.= "<td $nopad>&nbsp;</td><td $leftborder >&nbsp;</td>\r\n"; }
-                if($mode==2) {
-                    $Tableau.= "<td $Simplex>$TableElement</td>\r\n";
-                }
                 else {
-                    $Tableau.= "<td>$TableElement</td>\r\n";
+                    if($mode==2){
+                        $Tableau.= "<td $Simplex>$TableElement</td>\r\n";
+                    }
+                    else {
+                        $Tableau.= "<td>$TableElement</td>\r\n";
+                    }
                 }
-                $Tableau.= "<td $bottomrightborder>&nbsp;</td>\r\n";
             }
             else {
-                if($mode==2){
-                    $Tableau.= "<td $Simplex>$TableElement</td>\r\n";
+                if ($cloop==0) {
+                    $Tableau.= "<td $leftborder>&nbsp;</td><td>$TableElement</td>\r\n";
+                    if ($cloop==$lastcol) {
+                        $Tableau.= "<td $rightborder>&nbsp;</td>\r\n";
+                    }
+                }
+                elseif ($cloop==$lastcol) {
+                    if($mode>0) { $Tableau.= "<td $nopad>&nbsp;</td><td $leftborder >&nbsp;</td>\r\n"; }
+                    $Tableau.= "<td>$TableElement</td><td $rightborder>&nbsp;</td>\r\n";
                 }
                 else {
                     $Tableau.= "<td>$TableElement</td>\r\n";
                 }
             }
         }
-        else {
-            if ($cloop==0) {
-                $Tableau.= "<td $leftborder>&nbsp;</td><td>$TableElement</td>\r\n";
-                if ($cloop==$lastcol) {
-                    $Tableau.= "<td $rightborder>&nbsp;</td>\r\n";
-                }
-            }
-            elseif ($cloop==$lastcol) {
-                if($mode>0) { $Tableau.= "<td $nopad>&nbsp;</td><td $leftborder >&nbsp;</td>\r\n"; }
-                $Tableau.= "<td>$TableElement</td><td $rightborder>&nbsp;</td>\r\n";
-            }
-            else {
-                $Tableau.= "<td>$TableElement</td>\r\n";
-            }
-        }
+        $Tableau.= "</tr>\r\n";
     }
-    $Tableau.= "</tr>\r\n";
-    }
-  $Tableau.= "</tbody>\r\n";
-  $Tableau.= "</table>\r\n";
+    $Tableau.= "</tbody>\r\n";
+    $Tableau.= "</table>\r\n";
 
-  return $Tableau;
+    return $Tableau;
 }
 
 //matrixsystemdisp(matrix,[variables,leftbracket])
@@ -396,7 +397,7 @@ $Tableau .= "<tbody>\r\n";
 //variables is optional array of variables to use
 //leftbracket determines if left bracket is shown (def true)
 function matrixsystemdisp($m,$v=null,$leftbracket=true) {
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixsystemdisp input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixsystemdisp input not a valid matrix'; } return '';}
 
 	if ($leftbracket) {
 		$out = '{';
@@ -458,7 +459,7 @@ function matrixsystemdisp($m,$v=null,$leftbracket=true) {
 //get entry from a matrix at given row and col
 //rows and cols are 0 indexed (first row is row 0)
 function matrixgetentry($m,$r,$c) {
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixgetentry input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixgetentry input not a valid matrix'; } return '';}
 	if ($r<0 || $c<0 || $r>=count($m) || $c>=count($m[0])) {
 		echo 'invalid row or column';
 		return 0;
@@ -472,7 +473,7 @@ function matrixgetentry($m,$r,$c) {
 //  or array if asArray is set to true
 //rows and cols are 0 indexed (first row is row 0)
 function matrixgetrow($m,$r, $asArray=false) {
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixgetrow input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixgetrow input not a valid matrix'; } return '';}
 	if ($r<0 || $r>=count($m)) {
 		echo 'invalid row';
 	} else {
@@ -489,7 +490,7 @@ function matrixgetrow($m,$r, $asArray=false) {
 //  or array if asArray is set to true
 //rows and cols are 0 indexed (first row is row 0)
 function matrixgetcol($m,$c, $asArray=false) {
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixgetcol input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixgetcol input not a valid matrix'; } return '';}
 	if ($c<0 || $c>=count($m[0])) {
 		echo 'invalid col';
 	} else {
@@ -509,7 +510,7 @@ function matrixgetcol($m,$c, $asArray=false) {
 //gets submatrix.  rowselector and colselector are strings
 //with format:  "start:end".  ":" to select all
 function matrixgetsubmatrix($m,$rs,$cs) {
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixgetsubmatrix input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixgetsubmatrix input not a valid matrix'; } return '';}
 	$rsp = explode(':',$rs);
 	if (count($rsp)<2) {
 		$rstart = 0;  $rend = count($m)-1;
@@ -553,7 +554,7 @@ function matrixgetsubmatrix($m,$rs,$cs) {
 //matrixsum(matrix,matrix)
 //Adds two matrices
 function matrixsum($m,$n) {
-	if (!isMatrix($m) || !isMatrix($n)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixsum input not a matrix'; } return '';}
+	if (!isMatrix($m) || !isMatrix($n)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixsum input not a valid matrix'; } return '';}
 	if (count($m)!=count($n) || count($m[0])!=count($n[0])) {
 		echo 'matrix size does not match: cannot add';
 		return $m;
@@ -569,7 +570,7 @@ function matrixsum($m,$n) {
 //matrixdiff(matrix1,matrix2)
 //Subtracts matrix1-matrix2
 function matrixdiff($m,$n) {
-	if (!isMatrix($m) || !isMatrix($n)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixdiff input not a matrix'; } return '';}
+	if (!isMatrix($m) || !isMatrix($n)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixdiff input not a valid matrix'; } return '';}
 
 	if (count($m)!=count($n) || count($m[0])!=count($n[0])) {
 		echo 'matrix size does not match: cannot subtract';
@@ -586,7 +587,7 @@ function matrixdiff($m,$n) {
 //matrixscalar(matrix,n)
 //Multiplies the matrix times the number n
 function matrixscalar($m,$n) {
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixscalar input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixscalar input not a valid matrix'; } return '';}
 	for ($i=0; $i<count($m); $i++) {
 		for ($j=0; $j<count($m[0]); $j++) {
 			$m[$i][$j] *= $n;
@@ -598,7 +599,7 @@ function matrixscalar($m,$n) {
 //matrixprod(matrix1,matrix2)
 //Calculates the matrix product matrix1*matrix2
 function matrixprod($m,$n) {
-	if (!isMatrix($m) || !isMatrix($n)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixprod input not a matrix'; } return '';}
+	if (!isMatrix($m) || !isMatrix($n)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixprod input not a valid matrix'; } return '';}
 	if (count($m[0])!=count($n)) {
 		echo 'matrix sizes do not allow product';
 		return $m;
@@ -627,7 +628,7 @@ function matrixprod($m,$n) {
 //matrixaugment(matrix1,matrix2)
 //Augments matrix2 to the right side of matrix1
 function matrixaugment($m,$n) {
-	if (!isMatrix($m) || !isMatrix($n)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixaugment input not a matrix'; } return '';}
+	if (!isMatrix($m) || !isMatrix($n)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixaugment input not a valid matrix'; } return '';}
 	if (count($m)!=count($n)) {
 		echo 'row count does not match: cannot augment';
 		return $m;
@@ -642,7 +643,7 @@ function matrixaugment($m,$n) {
 //Multiplies row of matrix by n
 //matrix rows are 0-indexed; first row is row 0
 function matrixrowscale($m,$r,$n) {
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixrowscale input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixrowscale input not a valid matrix'; } return '';}
 	for ($j=0; $j<count($m[$r]); $j++) {
 		$m[$r][$j] *= $n;
 	}
@@ -664,7 +665,7 @@ function matrixrowswap($m,$r,$t) {
 //replaces endrow in matrix with a*row1 + b*row2
 //matrix rows are 0-indexed; first row is row 0
 function matrixrowcombine($m,$r1,$a,$r2,$b,$s) {
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixrowcombine input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixrowcombine input not a valid matrix'; } return '';}
 	for ($j=0; $j<count($m[$s]); $j++) {
 		$m[$s][$j] = $a*$m[$r1][$j] + $b*$m[$r2][$j];
 	}
@@ -699,7 +700,7 @@ function matrixidentity($n) {
 //matrixtranspose(m)
 //Calculates the transpose of the matrix m
 function matrixtranspose($m) {
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixtranspose input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixtranspose input not a valid matrix'; } return '';}
 	$n = array();
 	for ($c=0; $c<count($m[0]); $c++) {
 		$n[$c] = array();
@@ -777,7 +778,7 @@ function hasallzerorow($m) {
 //matrixinverse(m)
 //Finds the inverse of nxn matrices.
 function matrixinverse($m) {
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixinverse input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixinverse input not a valid matrix'; } return '';}
 	if (count($m[0])!=count($m)) {
 		echo 'matrix must be square';
 		return $m;
@@ -790,7 +791,7 @@ function matrixinverse($m) {
 //the fraction entries are strings, so do NOT try to use the result of this
 //for calculations.
 function matrixinversefrac($m) {
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixinversefrac input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixinversefrac input not a valid matrix'; } return '';}
 	if (count($m[0])!=count($m)) {
 		echo 'matrix must be square';
 		return $m;
@@ -804,7 +805,7 @@ function matrixinversefrac($m) {
 //A is nxn, b is nxm
 //returns nxm matrix x so Ax = b
 function matrixsolve($A, $b, $silenterror=false) {
-	if (!isMatrix($A)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixsolve input not a matrix'; } return '';}
+	if (!isMatrix($A)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixsolve input not a valid matrix'; } return '';}
 	if (count($A) != count($A[0])) {
 		echo "can only solve for square matrices A, sorry";  return $b;
 	}
@@ -814,7 +815,7 @@ function matrixsolve($A, $b, $silenterror=false) {
     // number of rows
     $N  = count($b);
     $M = count($b[0]); //number of cols in $b
-    
+
     if ($N>10) {
 	global $myrights;
 	if ($myrights>10) {
@@ -877,7 +878,7 @@ function matrixsolve($A, $b, $silenterror=false) {
 //entries may be fractions (as strings), so don't
 //try to use the result in calculations.
 function matrixsolvefrac($A, $b, $asString=true) {
-	if (!isMatrix($A)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixsolvefrac input not a matrix'; } return '';}
+	if (!isMatrix($A)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixsolvefrac input not a valid matrix'; } return '';}
 	if (count($A) != count($A[0])) {
 		echo "can only solve for square matrices A, sorry";  return $b;
 	}
@@ -891,7 +892,7 @@ function matrixsolvefrac($A, $b, $asString=true) {
     if ($N>10) {
 	global $myrights;
 	if ($myrights>10) {
-		echo "You really shouldn't use matrixsolvefrac for matrices bigger than 10 rows."; 
+		echo "You really shouldn't use matrixsolvefrac for matrices bigger than 10 rows.";
 	}
     }
     for ($r=0;$r<$N;$r++) {
@@ -917,7 +918,7 @@ function matrixsolvefrac($A, $b, $asString=true) {
 
       // check if matrix is singular
       if (abs($A[$p][$p][0]/$A[$p][$p][1]) <= 1e-10) {
-        if ($GLOBALS['myrights']>10) { echo("Solve failed: Matrix is singular or nearly singular"); } 
+        if ($GLOBALS['myrights']>10) { echo("Solve failed: Matrix is singular or nearly singular"); }
         return $b;
       }
 
@@ -967,7 +968,7 @@ function matrixsolvefrac($A, $b, $asString=true) {
 //  try to use the result in calculations.
 //NOTE:  In most cases, using matrixrandunreduce is a better option than using this!
 function matrixreduce($A, $rref = false, $frac = false) {
-	if (!isMatrix($A)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixreduce input not a matrix'; } return '';}
+	if (!isMatrix($A)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixreduce input not a valid matrix'; } return '';}
 	include_once("fractions.php");
     // number of rows
     $N  = count($A);
@@ -976,7 +977,7 @@ function matrixreduce($A, $rref = false, $frac = false) {
     if ($N>10) {
 	global $myrights;
 	if ($myrights>10) {
-		echo "You really shouldn't use matrixreduce for matrices bigger than 10 rows."; 
+		echo "You really shouldn't use matrixreduce for matrices bigger than 10 rows.";
 	}
     }
 		$usefraccalc = true;
@@ -1076,7 +1077,7 @@ function matrixreduce($A, $rref = false, $frac = false) {
 // being row reduced to reduced echelon form (see matrixreduce)
 //Returns the number of Ax=b equations that have at least one solution
 function matrixnumsolutions($A,$n=0) {
-	if (!isMatrix($A)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixnumsolutions input not a matrix'; } return '';}
+	if (!isMatrix($A)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixnumsolutions input not a valid matrix'; } return '';}
 	$c = count($A[0]);
 	$Ac = $c - $n;
 	$r = count($A);
@@ -1100,7 +1101,7 @@ function matrixnumsolutions($A,$n=0) {
 //matrixround(matrix, decimal places)
 //rounds each entry of the matrix the specified decimal places
 function matrixround($m,$d) {
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixround input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixround input not a valid matrix'; } return '';}
 	$c = count($m[0]);
 	$r = count($m);
 	for ($i=0; $i<$r; $i++) {
@@ -1149,7 +1150,7 @@ function arrayIsZeroVector($v){
 //returns the rank of a matrix
 //column rank = row rank (https://www.maa.org/sites/default/files/3004418139737.pdf.bannered.pdf)
 function matrixGetRank($m){
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixGetRank input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixGetRank input not a valid matrix'; } return '';}
 	$rowRank = 0;
 
 	$refM = matrixreduce($m,false,false);
@@ -1196,7 +1197,7 @@ function matrixIsRowsLinInd($m){
 //matrixIsColsLinInd(matrix)
 //matrix: returns true if the columns of the matrix are linearly independent
 function matrixIsColsLinInd($m){
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixIsColsLinInd input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixIsColsLinInd input not a valid matrix'; } return '';}
 	if(matrixGetRank($m) == count($m[0])){
 		return (true);
 	}
@@ -1210,7 +1211,7 @@ function matrixIsColsLinInd($m){
 //eigenvector:  the possible eigenvector that we are checking.  It is an array, not a matrix.
 // returns true is eigenvector is an eigenvector of matrix.  Otherwise it returns false
 function matrixIsEigVec($m,$v){
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixIsEigVec input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixIsEigVec input not a valid matrix'; } return '';}
 	if(count($m)!=count($m[0])){
 		echo("The matrix must be a square matrix");
         return false;
@@ -1233,7 +1234,7 @@ function matrixIsEigVec($m,$v){
 //matrix:  the matrix that we are testing
 //eigenvalue a real number that we are testing to see if it is an eigenvalue of matrix.
 function matrixIsEigVal($m,$L){
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixIsEigVal input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixIsEigVal input not a valid matrix'; } return '';}
 	if(count($m)!=count($m[0])){
 		echo("The matrix must be a square matrix");
         return false;
@@ -1254,7 +1255,7 @@ function matrixIsEigVal($m,$L){
 //matrix:  the matrix that we are finding the row space
 //returns a matrix whose rows are a basis of the row space of matrix
 function matrixGetRowSpace($m){
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixGetRowSpace input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixGetRowSpace input not a valid matrix'; } return '';}
 	$m = matrixreduce($m,true,false);
 
 	$retMatrix = array();
@@ -1272,7 +1273,7 @@ function matrixGetRowSpace($m){
 //matrix:  the matrix that we are finding the column space
 //returns a matrix whose columns are a basis of the column space of matrix
 function matrixGetColumnSpace($m){
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixGetColumnSpace input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixGetColumnSpace input not a valid matrix'; } return '';}
 	return(matrixtranspose(matrixGetRowSpace(matrixtranspose($m))));
 }
 
@@ -1280,7 +1281,7 @@ function matrixGetColumnSpace($m){
 //A is a marix and b is a mx1 matrix.
 //returns true if there is a solution and false if there isn't one
 function matrixAxbHasSolution($A,$b){
-	if (!isMatrix($A)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixAxbHasSolution input not a matrix'; } return '';}
+	if (!isMatrix($A)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixAxbHasSolution input not a valid matrix'; } return '';}
 	if(count($A)!=count($b)){
 		echo("The number of entries of b must equal the number of rows of A.  A not b:  ".count($A). " not ".count($b));
 	}
@@ -1308,7 +1309,7 @@ function matrixAxbHasSolution($A,$b){
 //A is the possible spanning set
 //This tests if the rows of A span the row space of B
 function matrixAspansB($A,$B){
-	if (!isMatrix($A) || !isMatrix($B)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixAspansB input not a matrix'; } return '';}
+	if (!isMatrix($A) || !isMatrix($B)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixAspansB input not a valid matrix'; } return '';}
 	$C = matrixaugment(matrixtranspose($A),matrixtranspose($B));
 
 	if(matrixGetRank($A) != matrixGetRank($B) || matrixGetRank($A) != matrixGetRank($C)){
@@ -1319,7 +1320,7 @@ function matrixAspansB($A,$B){
 //matrixAbasisForB(matrix A, matrix B)
 //tests if the rows of A are a basis for the row space of B
 function matrixAbasisForB($A,$B){
-	if (!isMatrix($A) || !isMatrix($B)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixAbasisForB input not a matrix'; } return '';}
+	if (!isMatrix($A) || !isMatrix($B)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixAbasisForB input not a valid matrix'; } return '';}
 	if(count($A[0])!=count($B[0])){
 		echo("The number of columns of A must equal to the number of columns of B");
 	}
@@ -1335,12 +1336,12 @@ function matrixAbasisForB($A,$B){
 //matrixGetMinor(matrix,rowNo,colNo)
 //returns the n-1 by n-1 matrix minor obtained by removing the rowNo row and colNo column.  Only works for a square matrix.
 function matrixGetMinor($A,$rowNo,$colNo){
-	if (!isMatrix($A)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixGetMinor input not a matrix'; } return '';}
+	if (!isMatrix($A)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixGetMinor input not a valid matrix'; } return '';}
 	if(count($A[0])<$colNo){
-		echo("The number of columns of A must at least as large as the column selected"); 
+		echo("The number of columns of A must at least as large as the column selected");
 	}
 	if(count($A)<$rowNo){
-		echo("The number of rows of A must at least as large as the row selected"); 
+		echo("The number of rows of A must at least as large as the row selected");
 	}
 
 	$retVal = array();
@@ -1366,7 +1367,7 @@ function matrixGetMinor($A,$rowNo,$colNo){
 //det(matrix)
 //returns the determinant of a matrix
 function matrixDet($A){
-	if (!isMatrix($A)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixDet input not a matrix'; } return '';}
+	if (!isMatrix($A)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixDet input not a valid matrix'; } return '';}
 	if(count($A)!=count($A[0])){
 		echo("A must be a square matrix");
 	}
@@ -1397,7 +1398,7 @@ function matrixRandomMatrix($min,$max,$rows,$cols){
 //returns a matrix of rows that span the row space of matrix
 //the number of rows of the spanning matrix will either be the same or one larger than the original matrix's number of rows.
 function matrixRandomSpan($m){
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixRandomSpan input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixRandomSpan input not a valid matrix'; } return '';}
 	$ranCols = $GLOBALS['RND']->rand(count($m),count($m)+1);
 	if($ranCols == count($m)){
 		return matrixrandunreduce($m,5);
@@ -1413,20 +1414,23 @@ function matrixRandomSpan($m){
 //matrixNumberOfRows(matrix)
 // returns the number of rows of a matrix
 function matrixNumberOfRows($m){
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixNumberOfRows input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixNumberOfRows input not a valid matrix'; } return '';}
 	return(count($m));
 }
 //matrixNumberOfColumns(matrix)
 // returns the number of columns of a matrix
 function matrixNumberOfColumns($m){
-	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixNumberOfColumns input not a matrix'; } return '';}
+	if (!isMatrix($m)) { if ($GLOBALS['myrights']>10) { echo 'error: matrixNumberOfColumns input not a valid matrix'; } return '';}
 	return(count($m[0]));
 }
 
 function matrixParseStuans($stu) {
 	if ($stu === null) {
-		return array(); 
+		return array();
 	} else {
+        list($arr,$numrows) = parseMatrixToArray($stu);
+        return $arr;
+        /*
         $start = substr($stu,0,2);
         if ($start=='[(' || $start=='((' || $start=='|(') {
             $ansr = substr($stu,2,-2);
@@ -1435,6 +1439,7 @@ function matrixParseStuans($stu) {
         } else {
             return explode('|', $stu);
         }
+        */
     }
 }
 
@@ -1477,7 +1482,7 @@ function matrixFromEigenvals($values) {
         $ops[] = array($sr, $er, $mults[$i-1]);
 		$m = matrixrowcombine($m,$sr,$mults[$i-1],$er,1,$er);
     }
-    
+
     $n = 0;
     // real evals will get one row as evec
     // complex evals will get one row for imag, and next for real part
@@ -1523,7 +1528,7 @@ function matrixFromEigenvals($values) {
     for ($i=count($ops)-1; $i>-1; $i--) {
         $mi = matrixrowcombine($mi,$ops[$i][0],-1*$ops[$i][2],$ops[$i][1],1,$ops[$i][1]);
     }
-    
+
     $evecs = [];
     $r = 0;
     foreach ($values as $v) {

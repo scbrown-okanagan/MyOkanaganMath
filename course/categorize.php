@@ -94,6 +94,7 @@ function getnextprev(formn,loc) {
 	}
 	return ([[prevl,prevq],[nextl,nextq]]);
 }
+function sethighlightrow() {}
 </script>
 END;
     echo "<div class=breadcrumb>$breadcrumbbase ";
@@ -207,6 +208,7 @@ END;
 	echo '<table class="gb"><thead><tr><th></th><th>Q#</th><th>'._('Description').'</th><th class="sr-only">'._('Preview').'</th><th>'._('Category').'</th></tr></thead><tbody>';
 
 	foreach($itemarr as $qid) {
+        if (!isset($qsetids[$qid])) { continue; }
 		echo "<tr><td><input type=\"checkbox\" id=\"c".Sanitize::onlyInt($qid)."\" value=\"" . Sanitize::encodeStringForDisplay($qsetids[$qid]) . "\"/></td>";
 		echo "<td>Q" . Sanitize::encodeStringForDisplay($itemnum[$qid]) . '</td><td>';
 		echo Sanitize::encodeStringForDisplay($descriptions[$qid]) . "</td>";

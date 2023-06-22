@@ -307,7 +307,7 @@ if ($myrights<20) {
 							$ins_stm->execute(array(':libid'=>$libid, ':qsetid'=>$qsetid, ':ownerid'=>$userid, ':now'=>$now));
 						}
 						//determine which libraries to remove from; my lib assignments - newlibs
-						if ($_SESSION['lastsearchlibs'.$cid]!='') {
+						if (!empty($_SESSION['lastsearchlibs'.$cid])) {
 							$listedlibs = explode(',', $_SESSION['lastsearchlibs'.$cid]);
 						} else {
 							$listedlibs = array();
@@ -556,12 +556,12 @@ if ($myrights<20) {
 			$curBreadcrumb .= " &gt; <a href=\"manageqset.php?cid=$cid\">Manage Question Set </a>";
 			$curBreadcrumb .= " &gt; Change Question Rights";
 
-			$clist = Sanitize::encodeStringForDisplay(implode(",", $_POST['nchecked']));
-
 			if (!isset($_POST['nchecked'])) {
 				$overwriteBody = 1;
 				$body = "No questions selected.  <a href=\"manageqset.php?cid=$cid\">Go back</a>\n";
-			}
+			} else {
+                $clist = Sanitize::encodeStringForDisplay(implode(",", $_POST['nchecked']));
+            }
 		}
 	} else if (isset($_GET['transfer'])) {
 
@@ -1098,7 +1098,7 @@ function getnextprev(formn,loc) {
 			<input type=radio name="action" value="0" onclick="chglibtoggle(this)" checked="checked"/> Add to libraries, keeping any existing library assignments<br/>
 			<input type=radio name="action" value="1" onclick="chglibtoggle(this)"/> Add to libraries, removing existing library assignments<br/>
 			<?php
-			if ($_SESSION['searchall'.$cid]==0 && $_SESSION['lastsearchlibs'.$cid]!='0') {
+			if (isset($_SESSION['searchall'.$cid]) && isset($_SESSION['lastsearchlibs'.$cid]) && $_SESSION['searchall'.$cid]==0 && $_SESSION['lastsearchlibs'.$cid]!='0') {
 				echo '<input type=radio name="action" value="3" onclick="chglibtoggle(this)"/> Add to libraries, removing library assignment in currently listed libraries<br/>';
 			}
 			?>
