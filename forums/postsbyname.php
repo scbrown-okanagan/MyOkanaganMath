@@ -57,7 +57,7 @@
 
 	$placeinhead = '<link rel="stylesheet" href="'.$staticroot.'/forums/forums.css?ver=082911" type="text/css" />';
 	if ($haspoints && $caneditscore && $rubric != 0) {
-		$placeinhead .= '<script type="text/javascript" src="'.$staticroot.'/javascript/rubric.js?v=022622"></script>';
+		$placeinhead .= '<script type="text/javascript" src="'.$staticroot.'/javascript/rubric.js?v=011823"></script>';
 		require("../includes/rubric.php");
 	}
 	if ($caneditscore && $_SESSION['useed']!=0) {
@@ -192,7 +192,7 @@
 	}
 	function GBdoReply(threadid,postid) {
 		var qsb = "embed=true&cid="+cid+"&thread="+threadid+"&forum=<?php echo $forumid?>";
-		GB_show(_("Reply"),"posts.php?"+qsb+"&modify=reply&replyto="+postid,600,"auto");
+		GB_show(_("Reply"),"posts.php?"+qsb+"&modify=reply&replyto="+postid,600,"auto",true,'','',{'func':'submitpost','label':'<?php echo _('Post Reply');?>'});
 		return false;
 	}
 	</script>
@@ -390,7 +390,7 @@
 
 	echo "<p>Color code<br/>Black: New thread</br><span style=\"color:green;\">Green: Reply</span></p>";
 
-	echo "<p><a href=\"thread.php?cid=$cid&forum=$forumid&page=".Sanitize::onlyInt($_GET['page'])."\">Back to Thread List</a></p>";
+	echo "<p><a href=\"thread.php?cid=$cid&forum=$forumid&page=$page\">Back to Thread List</a></p>";
 
 	require("../footer.php");
 

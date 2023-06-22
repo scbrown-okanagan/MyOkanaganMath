@@ -121,7 +121,7 @@ Class RollingCurlX {
             $this->init_request($i, $multi_handle, $requests_map);
             $num_outstanding++;
         }
-
+        $active = 1;
         do{
             do{
                 $mh_status = curl_multi_exec($multi_handle, $active);
@@ -267,6 +267,7 @@ Class RollingCurlX {
           //if server responded with http error or a non 2xx code
             debuglog('request error: '. curl_error($ch));
             debuglog('http_code: '. $request_info['http_code'].' rounded '.round(intval($request_info['http_code'])/100));
+            $request_info['response_text'] = curl_multi_getcontent($ch);
             $response = false;
         } else { //sucessful response
             $response = curl_multi_getcontent($ch);

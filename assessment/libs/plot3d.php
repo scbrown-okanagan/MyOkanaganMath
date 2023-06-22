@@ -271,7 +271,12 @@ function spacecurve($func,$tmin,$tmax) {
 
 		 $html .= "<span aria-hidden=true>Not seeing the 3D graph?  <a href=\"$url\">Try Alternate</a></span>";
 	  	 $html .= "</canvas>";
-			 $init = "var plot3d$r = new Viewer3D({verts: '$verts', curves: true, width: '$width', height:'$height', showaxes:$axes}, 'plot3d$r');";
+        if (isset($bounds)) {
+            $bndtxt = 'bounds:"' . implode(',',$bounds) . '",';
+        } else {
+              $bndtxt='';
+        }
+			 $init = "var plot3d$r = new Viewer3D({verts: '$verts', curves: true, $bndtxt width: '$width', height:'$height', showaxes:$axes}, 'plot3d$r');";
 			 if (isset($GLOBALS['assessUIver']) && $GLOBALS['assessUIver'] > 1) {
 				 $html .= "<script type=\"text/javascript\"> $init </script>";
 			 } else {
@@ -288,14 +293,14 @@ function replace3dalttext($plot, $alttext) {
 
 //CalcPlot3Dembed(functions, [width, height, xmin, xmax, ymin, ymax, zmin, zmax, xscale, yscale, zscale, zclipmin, zclipmax])
 //funcs is array of function strings
-function CalcPlot3Dembed($funcs, $width=500, $height=500, $xmin=-2, $xmax=2, $ymin=-2, $ymax=2, $zmin=-2, $zmax=2, $xscl=1, $yscl=1, $zscl=1, $zclipmin=null,$zclipmax=null) {
+function CalcPlot3Dembed($funcs, $width=500, $height=500, $xmin=-2, $xmax=2, $ymin=-2, $ymax=2, $zmin=-2, $zmax=2, $xscl=1, $yscl=1, $zscl=1, $zclipmin=null,$zclipmax=null,$showbox=true) {
 	if ($zclipmin===null) {
 		$zclipmin = $zmin - .5*($zmax-$zmin);
 	}
 	if ($zclipmax===null) {
 		$zclipmax = $zmax + .5*($zmax-$zmin);
 	}
-	$querystring = CalcPlot3Dquerystring($funcs, $xmin, $xmax, $ymin, $ymax, $zmin, $zmax, $xscl, $yscl, $zscl, $zclipmin, $zclipmax);
+	$querystring = CalcPlot3Dquerystring($funcs, $xmin, $xmax, $ymin, $ymax, $zmin, $zmax, $xscl, $yscl, $zscl, $zclipmin, $zclipmax,$showbox);
 	$out = '<div class="video-wrapper-wrapper" style="max-width: '.Sanitize::onlyInt($width).'px">';
 	$aspectRatio = round(100*$height/$width,2);
 	$out .= '<div class="fluid-width-video-wrapper" style="padding-top:'.$aspectRatio.'%">';
@@ -308,22 +313,21 @@ function CalcPlot3Dembed($funcs, $width=500, $height=500, $xmin=-2, $xmax=2, $ym
 
 //CalcPlot3Dlink(functions, link text, [xmin, xmax, ymin, ymax, zmin, zmax, xscale, yscale, zscale, zclipmin, zclipmax])
 //funcs is array of function strings
-function CalcPlot3Dlink($funcs, $linktext="View Graph", $xmin=-2, $xmax=2, $ymin=-2, $ymax=2, $zmin=-2, $zmax=2, $xscl=1, $yscl=1, $zscl=1, $zclipmin=null,$zclipmax=null) {
+function CalcPlot3Dlink($funcs, $linktext="View Graph", $xmin=-2, $xmax=2, $ymin=-2, $ymax=2, $zmin=-2, $zmax=2, $xscl=1, $yscl=1, $zscl=1, $zclipmin=null,$zclipmax=null,$showbox=true) {
 	if ($zclipmin===null) {
 		$zclipmin = $zmin - .5*($zmax-$zmin);
 	}
 	if ($zclipmax===null) {
 		$zclipmax = $zmax + .5*($zmax-$zmin);
 	}
-	$querystring = CalcPlot3Dquerystring($funcs, $xmin, $xmax, $ymin, $ymax, $zmin, $zmax, $xscl, $yscl, $zscl, $zclipmin, $zclipmax);
+	$querystring = CalcPlot3Dquerystring($funcs, $xmin, $xmax, $ymin, $ymax, $zmin, $zmax, $xscl, $yscl, $zscl, $zclipmin, $zclipmax,$showbox);
 	//$querystring is sanitized as it's constructed
 	$out = '<a href="https://c3d.libretexts.org/CalcPlot3D/index.html?'.$querystring.'" target="_blank">';
 	$out .= Sanitize::encodeStringForDisplay($linktext).'</a>';
 	return $out;
 }
 
-
-function CalcPlot3Dquerystring($funcs, $xmin, $xmax, $ymin, $ymax, $zmin, $zmax, $xscl, $yscl, $zscl, $zclipmin, $zclipmax) {
+function CalcPlot3Dquerystring($funcs, $xmin, $xmax, $ymin, $ymax, $zmin, $zmax, $xscl, $yscl, $zscl, $zclipmin, $zclipmax, $showbox) {
 	$out = array();
 	if (!is_array($funcs)) {
 		$funcs = array($funcs);
@@ -333,6 +337,10 @@ function CalcPlot3Dquerystring($funcs, $xmin, $xmax, $ymin, $ymax, $zmin, $zmax,
 	}
 	$win = "type=window;xmin=$xmin;xmax=$xmax;ymin=$ymin;ymax=$ymax;zmin=$zmin;zmax=$zmax;";
 	$win .= "xscale=$xscl;yscale=$yscl;zscale=$zscl;zcmin=$zclipmin;zcmax=$zclipmax";
+    $win .= ";showbox=" . ($showbox ? 'true' : 'false');
+    $maxwidth = max($xmax-$xmin, $ymax-$ymin, $zmax-$zmin);
+    $zoom = 0.0000055/atan(0.00000198669*$maxwidth);
+    $win .= ';zoom='.$zoom;
 	$out[] = $win;
 	return implode('&', array_map('Sanitize::encodeUrlParam', $out));
 }
@@ -342,8 +350,8 @@ function CalcPlot3Dquerystring($funcs, $xmin, $xmax, $ymin, $ymax, $zmin, $zmax,
 //				defaults: window's xmin,xmax,ymin,ymax, 30
 //  Implicit: 		x^2+y^2=z^2,[xmin,ymin,xmax,ymax,zmin,zmax,cubes]
 //				defaults: window's xmin,xmax,ymin,ymax,zmin,zmax 16
-//  Spacecurve: 	curve,x(t),y(t),z(t),[tmin,tmax,tsteps]
-//				defaults: -10,10,100
+//  Spacecurve: 	curve,x(t),y(t),z(t),[tmin,tmax,tsteps,width,color]
+//				defaults: -10,10,100,2,rainbow
 //  Parametric surf: 	psurf,x(u,v),y(u,v),z(u,v),[umin,umax,vmin,vmax,usteps,vsteps]
 //				defaults: 0,2pi,0,pi,30,15
 //  Region: 		region,y=f(x) bottom func,y=g(x) top func,z top function,[xmin,xmax]
@@ -359,6 +367,7 @@ function CalcPlot3Dquerystring($funcs, $xmin, $xmax, $ymin, $ymax, $zmin, $zmax,
 //				color: hex color string like "FF0000", default "000000" (black)
 //				width: default 2
 //				x0,y0,z0: base point of vector, default 0,0,0
+// Point:       point, x, y, z, [color, size]
 function CalcPlot3DprepFunc($str,$gxmin=-2,$gxmax=2,$gymin=-2,$gymax=2,$gzmin=-2,$gzmax=2) {
 	$bits = array_map('trim', explode(',', $str));
 	$out = array();
@@ -388,7 +397,10 @@ function CalcPlot3DprepFunc($str,$gxmin=-2,$gxmax=2,$gymin=-2,$gymax=2,$gzmin=-2
 		$out[] = 'x='.$bits[1];
 		$out[] = 'y='.$bits[2];
 		$out[] = 'z='.$bits[3];
-		$def = array(array('tmin','tmax','tsteps'), array(-10,10,100));
+		$def = array(array('tmin','tmax','tsteps','width','color','dashed'), array(-10,10,100,2,'rainbow','false'));
+        if (isset($bits[8]) && $bits[8]!='rainbow' && $bits[8]!='gradient') {
+            $out[] = 'constcol=true';
+        }
 		$start = 4;
 	} else if ($bits[0]=='psurf') {
 		if (count($bits)<4) {
@@ -416,7 +428,7 @@ function CalcPlot3DprepFunc($str,$gxmin=-2,$gxmax=2,$gymin=-2,$gymax=2,$gzmin=-2
 		$start = 4;
 	} else if ($bits[0]=='vector') {
 		if (count($bits)<4) {
-			echo 'Insufficient information provided for CalcPlot3D parametric surface';
+			echo 'Insufficient information provided for CalcPlot3D vector';
 			return '';
 		}
 		$out[] = 'type=vector';
@@ -427,6 +439,26 @@ function CalcPlot3DprepFunc($str,$gxmin=-2,$gxmax=2,$gymin=-2,$gymax=2,$gzmin=-2
 		}
 		$def = array(array('color','size','initialpt'), array('000000', 2, '(0,0,0)'));
 		$start = 4;
+	} else if ($bits[0]=='point') {
+		if (count($bits)<4) {
+			echo 'Insufficient information provided for CalcPlot3D point';
+			return '';
+		}
+        //type=point;point=(-1,1,1);visible=true;color=rgb(0,0,0);size=4
+		$out[] = 'type=point';
+		$out[] = 'point=('.$bits[1].','.$bits[2].','.$bits[3].')';
+        $def = array(array('color','size'), array('000000', 4));
+		$start = 4;
+	} else if ($bits[0]=='text') {
+		if (count($bits)<5) {
+			echo 'Insufficient information provided for CalcPlot3D text';
+			return '';
+		}
+		$out[] = 'type=text';
+        $out[] = 'text='.str_replace(';',',',$bits[1]);
+		$out[] = 'point=('.$bits[2].','.$bits[3].','.$bits[4].')';
+        $def = array(array('color','fontsize','bold','italic','fontmath','align'), array('000000',14,'true','false','true','Upper-right'));
+		$start = 5;
 	} else {
 		$funcparts = explode('=',$bits[0]);
 		if (count($funcparts)==1) {

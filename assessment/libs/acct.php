@@ -345,6 +345,7 @@ function scorestatement($stua, $answer, $s, $sn) {
 					$i += 1;
 					continue; //don't need to swap since only one answer
 				}
+                if (!isset($stua[$i]) || !isset($stua[$i+1])) { continue; }
 				$matchtype = -1;  $matchval = -1;
 				$stua[$i+1] = floatval(str_replace(array('$',',',' '), '', $stua[$i+1]));
 				//for ($k=$sn;$k<$sn+2*$n;$k+=2) {
@@ -438,7 +439,7 @@ function makejournal($j, $sn, $ops, &$anstypes, &$questions, &$answer, &$showans
 	if ($showanswer === null) { $showanswer = '';}
 	if ($displayformat === null) { $displayformat = array();}
 
-	if ($ops[0] == 'pulldowns') {
+	if (isset($ops[0]) && $ops[0] == 'pulldowns') {
 		array_shift($ops);
 		$disptype = 'select';
 	} else {
@@ -622,6 +623,7 @@ function scorejournal($stua, $answer, $j, $sn) {
 		$usedans = array();
 		for ($i=$sn;$i<$sn+(3+$offset)*$n;$i+=3+$offset) {
 			$matchtype = -1;  $matchval = -1;
+            if (!isset($stua[$i]) || !isset($stua[$i+1+$offset]) || !isset($stua[$i+2+$offset])) { continue; }
 			for ($k=$sn;$k<$sn+(3+$offset)*$n;$k+=3+$offset) {
 				if (trim(strtolower($stua[$i]))==trim(strtolower($answer[$k]))) {
 					$matchtype = $k;
@@ -663,11 +665,13 @@ function scorejournal($stua, $answer, $j, $sn) {
 		//mark wrong the less harmful ones
 		$debaftercred = array();  $firstcred = false;
 		for ($i=$sn;$i<$sn+(3+$offset)*$n;$i+=3+$offset) {
+            if (!isset($stua[$i]) || !isset($stua[$i+1+$offset]) || !isset($stua[$i+2+$offset])) { continue; }
 			if ($stua[$i+1+$offset]!='' && $stua[$i+2+$offset]=='' && $firstcred) { $debaftercred[] = $i;}
 			if ($stua[$i+1+$offset]=='' && $stua[$i+2+$offset]!='') { $firstcred = true; }
 		}
 		$credbeforedeb = array();  $firstdeb = false;
 		for ($i=$sn+(3+$offset)*$n-3-$offset;$i>=$sn;$i-=(3+$offset)) {
+            if (!isset($stua[$i]) || !isset($stua[$i+1+$offset]) || !isset($stua[$i+2+$offset])) { continue; }
 			if ($stua[$i+1+$offset]!='' && $stua[$i+2+$offset]=='') { $firstdeb = true;}
 			if ($stua[$i+1+$offset]=='' && $stua[$i+2+$offset]!='' && $firstdeb) { $credbeforedeb[] = $i; }
 		}
@@ -815,7 +819,7 @@ function makeaccttable2($headers, $coltypes, $fixedrows, $cols, $sn, &$anstypes,
 			$headers = array($headers);
 		}
         $out = '<table class="'.$tblclass.'">';
-        if (abs($headers[0][1]) == count($cols)) {
+        if (is_numeric($headers[0][1]) && abs($headers[0][1]) == count($cols)) {
             $out .= '<caption '.($headers[0][1] < 0 ?'class="sr-only"':'').'>'.$headers[0][0].'</caption>';
             array_shift($headers);
         }
@@ -960,14 +964,16 @@ function makeaccttable3($headers, $coltypes, $fixedrows, $cols, $sn, &$anstypes,
 		$rowcnt = max($rowcnt, max(array_keys($cols[$i]))+1);
 	}
 	for ($j=0;$j<count($coltypes);$j++) {
-		if ($coltypes[$j]==false || $coltypes[$j]==-1) {continue;} //fixed column
+		if ($coltypes[$j]==false) {continue;} //fixed column
 		$maxsize[$j] = 0;
 		foreach ($cols[$j] as $v) {
 			$sl = strlen($v);
 			if ($sl>$maxsize[$j]) { $maxsize[$j] = $sl;}
-			if (!$hasdecimals && strpos($v, '.')!==false) { $hasdecimals = true;}
+			if ($coltypes[$j]>0 && !$hasdecimals && strpos($v, '.')!==false) { $hasdecimals = true;}
 		}
-		$maxsize[$j] += floor(($maxsize[$j]-0.5)/3);  //add size to account for commas
+        if ($coltypes[$j]>0) {
+		    $maxsize[$j] += floor(($maxsize[$j]-0.5)/3);  //add size to account for commas
+        }
 	}
 	if (count($headers)!=0) {
 		if (!is_array($headers[0])) {
@@ -1169,7 +1175,7 @@ function makeTchartsfromjournal($j, $order, $sn, &$anstypes, &$answer, &$showans
 		if (!isset($debits[$o])) {$debits[$o] = array();}
 		if (!isset($credits[$o])) {$credits[$o] = array();}
 		$out .= makeTchart($o, $max, $debits[$o], $credits[$o], $sn, $anstypes, $answer, $showanswer, $displayformat, $answerboxsize,true, $showtotal);
-		$sn += $max*2 + 2;
+		$sn += $max*2 + ($showtotal?2:0);
 	}
 	$out .= '<br class="clear"/>';
 	$showanswer .= '<br class="clear"/><p>&nbsp;</p>';
@@ -1177,7 +1183,7 @@ function makeTchartsfromjournal($j, $order, $sn, &$anstypes, &$answer, &$showans
 }
 
 // scoreTchartsfromjournal($stua,$answer,$j,$order,$sn)
-function scoreTchartsfromjournal($stua,$answer,$j,$order,$sn) {
+function scoreTchartsfromjournal($stua,$answer,$j,$order,$sn, $showtotal=true) {
 	$out = '';
 	$debits = array(); $credits = array();
 	foreach ($j as $jd) {
@@ -1208,7 +1214,7 @@ function scoreTchartsfromjournal($stua,$answer,$j,$order,$sn) {
 		if (!isset($debits[$o])) {$debits[$o] = array();}
 		if (!isset($credits[$o])) {$credits[$o] = array();}
 		$answer = scoreTchart($stua, $answer, $max, $debits[$o], $credits[$o], $sn);
-		$sn += $max*2 + 2;
+		$sn += $max*2 + ($showtotal?2:0);
 	}
 	return $answer;
 }
@@ -1357,6 +1363,8 @@ function scoreTchart($stua,$answer,$numrows,$leftentries,$rightentries, $sn) {
 	$cntright = count($rightentries);
 	//change blanks to zeros
 	for ($i=0;$i<$numrows;$i++) {
+        if (!isset($stua[$sn+2*$i])) { $stua[$sn+2*$i] = 0; }
+        if (!isset($stua[$sn+2*$i+1])) { $stua[$sn+2*$i+1] = 0; }
 		$stua[$sn+2*$i] = str_replace(array('$',','),'',$stua[$sn+2*$i]);
 		$stua[$sn+2*$i+1] = str_replace(array('$',','),'',$stua[$sn+2*$i+1]);
 		if (trim($stua[$sn+2*$i])=='') {
@@ -1516,7 +1524,7 @@ function scoreinventory($stua, $answer, $invs, $rowper, $sn) {
 		} else {
 			$sn += 3; //skip past purch
 			for ($i=$sn+3;$i<$sn+$rowper*6;$i+=6) {  //start on inventory
-				if ($stua[$i]=='') {continue;}
+				if (!isset($stua[$i]) || $stua[$i]=='') {continue;}
 				$foundmatch = false;
 				for ($j=$sn+3;$j<$sn+$rowper*6;$j+=6) {
 					if (trim($stua[$i])==$answer[$j] && trim($stua[$i+1])==$answer[$j+1]) {
@@ -1540,7 +1548,7 @@ function scoreinventory($stua, $answer, $invs, $rowper, $sn) {
 			}
 			if ($inv[0]=='sale') {
 				for ($i=$sn;$i<$sn+$rowper*6;$i+=6) {  //do cogs
-					if ($stua[$i]=='') {continue;}
+					if (!isset($stua[$i]) || $stua[$i]=='') {continue;}
 					$foundmatch = false;
 					for ($j=$sn;$j<$sn+$rowper*6;$j+=6) {
 						if (trim($stua[$i])==$answer[$j] && trim($stua[$i+1])==$answer[$j+1]) {
@@ -1822,8 +1830,8 @@ function scoretrialbalancefromjournal($stua, $answer, $j, $groups, $numrows, $sn
 //$data['assets'] = array(account, value, account, value)
 //['liabilities'], [equity],[revenue],[expenses]
 function maketrialbalance($data, $sn, $numrows, $ops, $bigtitle, &$anstypes, &$answer, &$questions, &$showanswer, &$displayformat, &$answerboxsize) {
-	$out .= '<table class="acctstatement noborder"><caption>'.$bigtitle.'</caption><thead><tr><th>Accounts</th><th>Debits</th><th>Credits</th></tr></thead><tbody>';
-	$sa .= '<table class="acctstatement noborder"><caption>'.$bigtitle.'</caption><thead><tr><th>Accounts</th><th>Debits</th><th>Credits</th></tr></thead><tbody>';
+	$out = '<table class="acctstatement noborder"><caption>'.$bigtitle.'</caption><thead><tr><th>Accounts</th><th>Debits</th><th>Credits</th></tr></thead><tbody>';
+	$sa = '<table class="acctstatement noborder"><caption>'.$bigtitle.'</caption><thead><tr><th>Accounts</th><th>Debits</th><th>Credits</th></tr></thead><tbody>';
 	$allaccts = array();
 	$maxsizedescr = 4; $hasdecimals = false;
 	foreach ($data as $t=>$dt) {
@@ -1936,7 +1944,7 @@ function scoretrialbalance($stua, $answer, $data, $numrows, $sn) {
 	}
 	//now score by groups.  We know stua is in the right order
 	for ($j=$sn;$j<$sn+$numrows*3;$j+=3) {
-		if ($stua[$j]=='') {continue;}
+		if (!isset($stua[$j]) || $stua[$j]=='') {continue;}
 		$foundmatch = false;
 		for ($i=$sn;$i<$sn+$nq*3;$i+=3) {
 			if (trim(strtolower($stua[$j]))==trim(strtolower($answer[$i]))) {

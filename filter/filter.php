@@ -104,6 +104,7 @@
 		if ($urlmode == 'https://') {
 			$str = str_replace(array('http://www.youtube.com','http://youtu.be'),array('https://www.youtube.com','https://youtu.be'), $str);
 		}
+        $str = str_replace('"http://quietube.com/v.php/http','"http', $str);
 		if (strip_tags($str)==$str) {
 			$str = str_replace("\n","<br/>\n",$str);
 		}
@@ -113,6 +114,7 @@
 				//$str = preg_replace('/<embed[^>]*sscr[^>]*>/',"[Graph with no description]", $str);
 				$str = preg_replace_callback('/<\s*embed[^>]*?sscr=(.)(.+?)\1.*?>/s','svgsscrtotextcallback',$str);
 			}
+            $str = preg_replace('/<canvas[^>]*aria-label="([^"]*)"[^>]*>.*?<\/canvas>/',"[$1]", $str);
 		}
 		if ($_SESSION['mathdisp']==2) {
 			$str = str_replace('\\`','&grave;',$str);
@@ -289,7 +291,7 @@
 			$str = preg_replace('/<select.*?\/select>/s','____',$str);
 		}
 		$str = preg_replace('/<table/','<table cellspacing="0"',$str);
-		$str = preg_replace('/`\s*(\w)\s*`/','<i>$1</i>',$str);
+		$str = preg_replace('/`\s*([a-zA-Z])\s*`/','<i>$1</i>',$str);
 
 		$str = preg_replace('/<input[^>]*hidden[^>]*>/','',$str); //strip hidden fields
 		if (strpos($str,'`')!==FALSE) {

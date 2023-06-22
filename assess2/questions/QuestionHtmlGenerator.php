@@ -170,6 +170,9 @@ class QuestionHtmlGenerator
             if (isset($scorenonzero[$thisq]) && !is_array($scorenonzero[$thisq])) {
                 $scorenonzero[$thisq] = array($scorenonzero[$thisq]);
             }
+        } else if ($quesData['qtype'] == "conditional" && is_array($scoreiscorrect[$thisq])) {
+            $scoreiscorrect[$thisq] = $scoreiscorrect[$thisq][0];
+            $scorenonzero[$thisq] = $scorenonzero[$thisq][0];
         }
         if ($attemptn == 0) {
           $GLOBALS['assess2-curq-iscorrect'] = -1;
@@ -207,13 +210,17 @@ class QuestionHtmlGenerator
           eval(interpret('qcontrol', $quesData['qtype'], $quesData['qcontrol']));
           eval(interpret('answer', $quesData['qtype'], $quesData['answer']));
         } catch (\Throwable $t) {
+          $errsource = basename($t->getFile());
+          if (strpos($errsource, 'QuestionHtmlGenerator.php') !== false) {
+            $errsource = _('Common Control');
+          }
           $this->addError(
               _('Caught error while evaluating the code in this question: ')
               . $t->getMessage()
               . ' on line '
               . $t->getLine()
               . ' of '
-              . basename($t->getFile())
+              . $errsource
           );
 
         }
@@ -344,13 +351,16 @@ class QuestionHtmlGenerator
             // Calculate answer weights.
             // $answeights - question writer defined
             if ($quesData['qtype'] == "multipart") {
+                if (max(array_keys($anstypes)) != count($anstypes)-1) {
+                    echo 'Error: $anstypes does not have consecutive indexes. This may cause scoring issues.';
+                }
                 if (isset($answeights)) {
         			if (!is_array($answeights)) {
         					$answeights = explode(",",$answeights);
                     }
                     $answeights = array_map('trim', $answeights);
                     if (count($answeights) != count($anstypes)) {
-                        $answeights = array_fill(0, count($anstypes), 1);
+                        $answeights = array_fill_keys(array_keys($anstypes), 1); 
                     }
                     $answeights = array_map(function($v) {
                         if (is_numeric($v)) { 
@@ -361,7 +371,7 @@ class QuestionHtmlGenerator
                     }, $answeights);
                 } else {
                     if (count($anstypes)>1) {
-                        $answeights = array_fill(0, count($anstypes), 1);
+                        $answeights = array_fill_keys(array_keys($anstypes), 1);
                     } else {
                         $answeights = array(1);
                     }
@@ -687,7 +697,7 @@ class QuestionHtmlGenerator
          *
          * Question content (raw HTML) is stored in: $evaledqtext
          */
-
+        $GLOBALS['qgenbreak1'] = __LINE__;
         try {
           $prep = \genVarInit($qtextvars);
           eval($prep . "\$evaledqtext = \"$toevalqtxt\";"); // This creates $evaledqtext.
@@ -697,6 +707,7 @@ class QuestionHtmlGenerator
          *
          * Solution content (raw HTML) is stored in: $evaledsoln
          */
+         $GLOBALS['qgenbreak2'] = __LINE__;
          $prep = \genVarInit($solnvars);
          eval($prep . "\$evaledsoln = \"$toevalsoln\";"); // This creates $evaledsoln.
        } catch (\Throwable $t) {
@@ -1061,9 +1072,8 @@ class QuestionHtmlGenerator
                 }
             }
             
-          
             if (!empty($hints[$usenum])) {
-                if (!is_string($usenum)) { // shouldn't be, but a hack to get old bad code from throwing errors.
+                if (!is_string($hints[$usenum])) { // shouldn't be, but a hack to get old bad code from throwing errors.
                     $hintloc = $hints[$usenum]; 
                 } else if (strpos($hints[$usenum], '</div>') !== false) {
                     $hintloc = $hints[$usenum];

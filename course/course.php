@@ -375,7 +375,7 @@ if (!isset($teacherid) && !isset($tutorid) && !isset($studentid) && !isset($inst
 	}
 }
 
-$placeinhead = "<script type=\"text/javascript\" src=\"$staticroot/javascript/course.js?v=12120\"></script>";
+$placeinhead = "<script type=\"text/javascript\" src=\"$staticroot/javascript/course.js?v=011823\"></script>";
 if (isset($tutorid) && isset($_SESSION['ltiitemtype']) && $_SESSION['ltiitemtype']==3) {
 	$placeinhead .= '<script type="text/javascript">$(function(){$(".instrdates").hide();});</script>';
 }
@@ -404,7 +404,7 @@ if ($overwriteBody==1) {
 		//	}
 		//}
 		function moveDialog(block,item) {
-			GB_show(_("Move Item"), imasroot+"/course/moveitem.php?cid="+cid+"&item="+item+"&block="+block, 600, "auto");
+			GB_show(_("Move Item"), imasroot+"/course/moveitem.php?cid="+cid+"&item="+item+"&block="+block, 600, "auto", true, '', null, {'label':_('Move'),'func':'moveitem'});
 			return false;
 		}
 		function additem(blk,tb) {

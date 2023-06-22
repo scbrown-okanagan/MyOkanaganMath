@@ -133,7 +133,7 @@ if (isset($_POST['options'])) {
 			$gb[$r][1] = $row[3];
 		}
         if ($doemail) {
-            $gb[$r][2] = $row[4];
+            $gb[$r][$hassection? 2 : 1] = $row[4];
         }
 		$sturow[$row[0]] = $r;
 		$r++;
@@ -183,12 +183,15 @@ if (isset($_POST['options'])) {
 
             for ($pn = 0; $pn < count($question_object['parts']); $pn++) {
                 $partinfo = $question_object['parts'][$pn];
-                if ($partinfo['try'] == 0) {
-                    $qscore[$pn] = 0;
-                    $raw[$pn] = 0;
-                } else {
+                if (isset($partinfo['score']) && $partinfo['score']>=0) {
                     $qscore[$pn] = $partinfo['score'];
+                } else {
+                    $qscore[$pn] = 0;
+                }
+                if (isset($partinfo['rawscore']) && $partinfo['rawscore']>=0) {
                     $raw[$pn] = $partinfo['rawscore'];
+                } else {
+                    $raw[$pn] = 0;
                 }
             }
             
