@@ -1,22 +1,14 @@
-<!DOCTYPE html>
 <?php
-	$dbsetup = true; //prevents connection to database
-	include("../init_without_validate.php");
-?>
-<html>
-<head>
-<title><?php echo $installname; ?></title>
-<link rel="stylesheet" href="<?php echo $staticroot;?>/infopages.css" type="text/css">
-<style type="text/css">
-img {
-	vertical-align: middle;
-}
-</style>
-</head>
-<body>
-<?php
-	$pagetitle = "Entering Answers";
-	require("../infoheader.php");
+$nologo = true;
+$dbsetup = true; //prevents connection to database
+include("../init_without_validate.php");
+//This is stuff I added to get otbs.css loaded up
+$coursetheme = $CFG['CPS']['theme'][0];
+$placeinhead = "<link rel=\"stylesheet\" href=\"$staticroot/infopages.css\" type=\"text/css\">\n";
+$placeinhead .= "<link rel=\"stylesheet\" href=\"$staticroot/themes/otbs.css\" type=\"text/css\">\n";
+require("../header.php");
+$pagetitle = "Entering Answers";
+require((isset($CFG['GEN']['diagincludepath'])?$CFG['GEN']['diagincludepath']:'../')."infoheader.php");
 ?>
 
 <img class="floatleft" src="<?php echo "$imasroot/img/typing.jpg"?>" alt="Picture of typing"/>

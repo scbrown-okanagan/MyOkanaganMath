@@ -4,9 +4,23 @@ html {
     text-size-adjust: none;
 }
 body {
-    background-color:#FFFFFF;
-	margin: 10px;
-	padding: 0px;
+	background-color:#FFFFFF;
+	/*font-family: Verdana,Tahoma,Arial,Helvetica,sans-serif;*/
+	/*font-family:"Minion Pro","Times New Roman",Times,serif;*/
+	/*font-family:normal Helvetica,Arial,sans-serif;*/
+	font-family: "Trebuchet MS", "Arial", "Helvetica", sans-serif;
+	font-size: 90%;
+	margin:0;
+	padding:0;
+}
+body.fw1000 {
+	background-color:#F7F7FF;
+	background-image:url(../img/simplebg.png);
+	background-position:center top;
+	background-repeat:repeat-y;
+}
+.fw1000 .midwrapper {
+	max-width: 970px;
 }
 div {
 	margin: 0px;
@@ -450,6 +464,7 @@ span.hdr1 {
 
 .midwrapper {
 	position: relative;
+	max-width: 970px;
 }
 
 .red {

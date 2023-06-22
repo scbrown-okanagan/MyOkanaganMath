@@ -97,7 +97,7 @@ div.breadcrumb {
 }
 ul#navlist {
 	width: 100% !important;
-	margin: 0px !important;
+	/*margin: 0px !important;*/
 }
 ul#navlist a {
 	padding-top: 0.3em !important;
