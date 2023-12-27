@@ -17,11 +17,13 @@
 
 	if (!isset($_GET['id'])) {
 		//echo "<html><body><h1>Diagnostics</h1><ul>";
+		echo "<html><body class=\"fw1000\">";
 		$nologo = true;
         $loadinginfoheader = true;;
 		$infopath = isset($CFG['GEN']['directaccessincludepath'])?$CFG['GEN']['directaccessincludepath']:'';
 		$placeinhead = "<link rel=\"stylesheet\" href=\"$staticroot/{$infopath}infopages.css\" type=\"text/css\">\n";
 		$placeinhead .= "<script type=\"text/javascript\" src=\"$staticroot/javascript/jstz_min.js\" ></script>";
+		$placeinhead .= "<link rel=\"stylesheet\" href=\"$staticroot/themes/mom.css\" type=\"text/css\">\n";
 		require_once "../header.php";
 		$pagetitle = "Diagnostics";
 		require_once (isset($CFG['GEN']['diagincludepath'])?$CFG['GEN']['diagincludepath']:'../')."infoheader.php";
