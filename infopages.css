@@ -60,15 +60,30 @@ div#logo {
 div#logo img {
 	vertical-align: middle;
 }
-
+div#headercontent {
+	height: 70px;
+	padding: 0px 10px;
+}
+div#navlistcont {
+	/*height: 24px;*/
+}
+div#headerbarlogo {
+	/*background: transparent url(../img/otbslogo.gif) no-repeat scroll left bottom;*/
+	font-size: min(50px,5cqw);
+	height: min(75px,6cqw);
+	vertical-align: middle;
+	/*overflow: hidden;*/
+}
+div#headerbarlogo img {
+	vertical-align: middle;
+	height: min(75px,6cqw)
+}
 div#header {
 	clear: both;
 	height: 75px;
-	background-color: #9C6;
+	background-color: #135eaad4;
 	margin: 0px;
 	padding: 0px;
-	border-left: 10px solid #036;
-	border-bottom: 5px solid #036;
 }
 
 .vcenter {
@@ -82,7 +97,7 @@ div#header {
 
 #loginbox {
 	float: right;
-	background-color: #EEEEFF;
+	background-color: #E384562E;
 	margin-right: 0px;
 	margin-left: 20px;
 	margin-bottom: 10px;
@@ -112,7 +127,7 @@ font-size: 105%;
 ul#navlist li a
 {
 float: left;
-width: 5em;
+width: 8em;
 color: #fff;
 background-color: #036;
 padding: 0.2em 2em;
