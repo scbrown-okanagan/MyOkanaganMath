@@ -6,3 +6,6 @@
 *.js~
 mathjax-b
 HTMLPurifier
+/admin/import
+/assessment/qimages
+/textbooks
