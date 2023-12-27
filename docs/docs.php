@@ -2,6 +2,7 @@
 $nologo = true;
 $dbsetup = true; //prevents connection to database
 require_once "../init_without_validate.php";
+$coursetheme = $CFG['CPS']['theme'][0];
 $placeinhead = "<link rel=\"stylesheet\" href=\"$staticroot/infopages.css\" type=\"text/css\">\n";
 require_once "../header.php";
 $pagetitle = "Documentation";
