@@ -5,7 +5,7 @@
 $dbserver = "localhost";
 $dbname = "imathasdb";
 $dbusername = "adminer";
-$dbpassword = "Evariste000";
+$dbpassword = file_get_contents("dbpassword.conf");
 
 //error reporting level.  Set to 0 for production servers.
 error_reporting(E_ALL & ~E_NOTICE);
@@ -70,6 +70,11 @@ $CFG['GEN']['headerinclude'] = 'myheadercontent.php';
 
 $CFG['GEN']['enrollonnewinstructor'] = array(8);
 
+$CFG['GEN']['qerroronold'] = array(100,25);
+
+//LTI options
+$CFG['LTI']['noCourseLevel'] = true;
+
 //session path 
 //$sessionpath = "";
 
@@ -81,6 +86,9 @@ $CFG['GEN']['enrollonnewinstructor'] = array(8);
 
 //$AWSbucket = "";
 
+//livepoll server config
+$CFG['GEN']['livepollserver'] = 'imathas.okanagan.bc.ca';
+$CFG['GEN']['livepollpassword'] = 'momlivepollpass';
 
 //Uncomment to change the default course theme, also used on the home & admin page:
 //$defaultcoursetheme = "default.css"
