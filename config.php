@@ -5,7 +5,7 @@
 $dbserver = "localhost";
 $dbname = "imathasdb";
 $dbusername = "adminer";
-$dbpassword = file_get_contents("dbpassword.conf");
+$dbpassword = file_get_contents('/var/www/MOM/dbpassword.conf');
 
 //error reporting level.  Set to 0 for production servers.
 error_reporting(E_ALL & ~E_NOTICE);
