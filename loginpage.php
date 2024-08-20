@@ -99,7 +99,7 @@ D2L Brightspace, etc.) and you will not be given a direct login to this page.</p
 
 <br class=clear>
 <p class="textright"><?php echo $installname;?> is powered by <a href="http://www.imathas.com">IMathAS</a> &copy; 2006-2023 David Lippman<br />
-and hosted in Kelowna, BC, Canada by <a href="https://www.canhost.ca/">CanHost</a></p>
+and managed by <a href="mailto:stephen.brown@ubc.ca">Stephen Brown</a></p>
 </div>
 <?php 
 	require("footer.php");
