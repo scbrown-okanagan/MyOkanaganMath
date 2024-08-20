@@ -4,8 +4,8 @@
 //database access settings
 $dbserver = "localhost";
 $dbname = "imathasdb";
-$dbusername = "adminer";
-$dbpassword = file_get_contents('/var/www/MOM/dbpassword.conf');
+$dbusername = "MOM";
+$dbpassword = "Evariste654";
 
 //error reporting level.  Set to 0 for production servers.
 error_reporting(E_ALL & ~E_NOTICE);
@@ -23,7 +23,7 @@ $loginformat = '/^[\w\-_.@]+$/';
 $emailconfirmation = false;
 
 //email to send notices from
-$sendfrom = "no-reply@imathas.okanagan.bc.ca";
+$sendfrom = "no-reply@myokanaganmath.ok.ubc.ca";
 
 //color shift icons as deadline approaches?
 $colorshift = true;
@@ -68,7 +68,7 @@ $CFG['CPS']['themenames'] = "MOM,MOM Fixed,MOM Fixed Wide";
 
 $CFG['GEN']['headerinclude'] = 'myheadercontent.php';
 
-$CFG['GEN']['enrollonnewinstructor'] = array(8);
+$CFG['GEN']['enrollonnewinstructor'] = array(1);
 
 $CFG['GEN']['qerroronold'] = array(100,25);
 
@@ -87,7 +87,7 @@ $CFG['LTI']['noCourseLevel'] = true;
 //$AWSbucket = "";
 
 //livepoll server config
-$CFG['GEN']['livepollserver'] = 'imathas.okanagan.bc.ca';
+$CFG['GEN']['livepollserver'] = 'myokanaganmath.ok.ubc.ca';
 $CFG['GEN']['livepollpassword'] = 'momlivepollpass';
 
 //Uncomment to change the default course theme, also used on the home & admin page:
