@@ -87,8 +87,8 @@ $CFG['LTI']['noCourseLevel'] = true;
 //$AWSbucket = "";
 
 //livepoll server config
-//$CFG['GEN']['livepollserver'] = 'imathas.okanagan.bc.ca';
-//$CFG['GEN']['livepollpassword'] = 'momlivepollpass';
+$CFG['GEN']['livepollserver'] = 'myokanaganmath.ok.ubc.ca';
+$CFG['GEN']['livepollpassword'] = 'momlivepollpass';
 
 //Uncomment to change the default course theme, also used on the home & admin page:
 //$defaultcoursetheme = "default.css"
