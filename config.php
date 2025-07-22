@@ -68,7 +68,8 @@ $CFG['CPS']['themenames'] = "MOM,MOM Fixed,MOM Fixed Wide";
 
 $CFG['GEN']['headerinclude'] = 'myheadercontent.php';
 
-$CFG['GEN']['enrollonnewinstructor'] = array(1);
+$CFG['GEN']['enrollonnewinstructor'] = array(8);
+$CFG['GEN']['homelayout'] = '|0,1,2|10,11|0,1';
 
 $CFG['GEN']['qerroronold'] = array(100,25);
 
