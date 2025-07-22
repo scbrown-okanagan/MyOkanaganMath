@@ -98,8 +98,8 @@ D2L Brightspace, etc.) and you will not be given a direct login to this page.</p
 <a href="<?php echo $imasroot; ?>/forms.php?action=newuser">register as a new student</a>.</p>
 
 <br class=clear>
-<p class="textright"><?php echo $installname;?> is powered by <a href="http://www.imathas.com">IMathAS</a> &copy; 2006-2023 David Lippman<br />
-and managed by <a href="mailto:stephen.brown@ubc.ca">Stephen Brown</a></p>
+<p class="textright"><?php echo $installname;?> is powered by <a href="http://www.imathas.com">IMathAS</a> &copy; 2006-2025 David Lippman<br />
+and managed by <a href="mailto:scbrown@okanagan.bc.ca">Stephen Brown</a></p>
 </div>
 <?php 
 	require("footer.php");
