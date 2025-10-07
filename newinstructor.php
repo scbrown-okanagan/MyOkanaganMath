@@ -1,5 +1,5 @@
 <?php
-
+	$init_session_start = true;
 	require("init_without_validate.php");
 	require_once(__DIR__.'/includes/newusercommon.php');
 
@@ -21,6 +21,9 @@
 
 	if (isset($_POST['firstname'])) {
 		$error = '';
+		if ($_POST['challenge'] !== $_SESSION['challenge'] || !empty($_POST['hval'])) {
+			$error .= "<p>Invalid submission</p>";
+		}
 		if (!isset($_POST['agree'])) {
 			$error .= "<p>You must agree to the Terms and Conditions to set up an account</p>";
 		}
@@ -100,6 +103,8 @@
 	if (isset($_POST['phone'])) {$phone=Sanitize::encodeStringForDisplay($_POST['phone']);} else {$phone='';}
 	if (isset($_POST['school'])) {$school=Sanitize::encodeStringForDisplay($_POST['school']);} else {$school='';}
 	if (isset($_POST['SID'])) {$username=Sanitize::encodeStringForDisplay($_POST['SID']);} else {$username='';}
+	$_SESSION['challenge'] = uniqid();
+	$challenge=Sanitize::encodeStringForDisplay($_SESSION['challenge']);
 
 	echo "<h3>New Instructor Account Request</h3>\n";
 	echo "<form method=post id=newinstrform class=limitaftervalidate action=\"newinstructor.php\">\n";
@@ -111,6 +116,8 @@
 	echo "<span class=form>Requested Username</span><span class=formright><input type=text id=SID name=SID value=\"$username\" size=40></span><br class=form />\n";
 	echo "<span class=form>Requested Password</span><span class=formright><input type=password id=pw1 name=pw1 size=40></span><br class=form />\n";
 	echo "<span class=form>Retype Password</span><span class=formright><input type=password id=pw2 name=pw2 size=40></span><br class=form />\n";
+	echo "<span class=hidden><span class=form hidden>Challenge</span><span class=formright><input type=text id=challenge name=challenge value=\"$challenge\" size=40></span><br class=form />\n</span>";
+	echo "<span class=hidden><span class=form hidden>Hidden</span><span class=formright><input type=text id=hval name=hval size=40></span><br class=form />\n</span>";
 	echo "<span class=form>I have read and agree to the Terms of Use (below)</span><span class=formright><input type=checkbox id=agree name=agree></span><br class=form />\n";
 	echo "<div class=submit><input type=submit value=\"Request Account\"></div>\n";
 	echo "</form>\n";
