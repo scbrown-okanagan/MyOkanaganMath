@@ -41,7 +41,7 @@ if (isset($_REQUEST["action"]))
 		//echo $filename;
 		//exit;
 		$extension = strtolower(strrchr($filename,"."));
-		$badextensions = array(".php",".php3",".php4",".php5",".bat",".com",".pl",".p",".exe");
+		$badextensions = array(".php",".php3",".php4",".php5",".bat",".com",".pl",".p",".exe",".phar");
 		if (in_array($extension,$badextensions)) {
 			unset($_REQUEST["action"]);
 		} else {
