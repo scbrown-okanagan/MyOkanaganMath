@@ -2,10 +2,7 @@
 //IMathAS Math Config File.  Adjust settings here!
 
 //database access settings
-$dbserver = "localhost";
-$dbname = "imathasdb";
-$dbusername = "MOM";
-$dbpassword = file_get_contents('/var/www/MOM/dbpassword.conf');
+include 'dbhost.php';
 
 //error reporting level.  Set to 0 for production servers.
 error_reporting(E_ALL & ~E_NOTICE);
