@@ -359,11 +359,13 @@ td.r {
 	left: 0;
 	z-index: 22;
 	border-right: 1px solid black;
+	background-color: inherit;
 }
 .sticky-table thead tr:first-child {
 	position: sticky;
 	top: 0;
 	z-index: 23;
+	background-color: #E2E2E2;
 }
 .sticky-table thead tr:first-child th {
 	border-bottom: 1px solid black;
